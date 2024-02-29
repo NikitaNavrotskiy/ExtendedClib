@@ -19,7 +19,12 @@ gcov_report: clean test
 	genhtml -o report $(TEST_EXEC)_gcov.info
 	open report/index.html
 
+doc:
+	doxygen
+	open docs/html/index.html
+
 clean:
 	rm -rf $(TEST_EXEC)
 	rm -rf *.info *.gcda *.gcno
 	rm -rf report/
+	rm -rf docs/*

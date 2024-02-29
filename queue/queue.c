@@ -1,6 +1,31 @@
 #include "queue.h"
 
 
+
+/**
+ * @struct Implements node for queue.
+ * 
+ */
+struct qnode
+{
+    /**
+     * @brief User data to store in queue.
+     */
+    void *data;
+
+    /**
+     * @brief Pointer to the next node in queue.
+     */
+    struct qnode *next;
+
+    /**
+     * @brief Pointer to the previous node in queue.
+     */
+    struct qnode *prev;
+};
+
+
+
 /**
  * @brief private function to initialize qnode.
  * 
