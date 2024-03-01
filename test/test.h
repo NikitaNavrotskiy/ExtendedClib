@@ -6,7 +6,9 @@
 #include <time.h>
 
 #include "../lib/queue.h"
+#include "../lib/stack.h"
 
-Suite *suite_queue();
+Suite *suite_queue ();
+Suite *suite_stack ();
 
 #endif

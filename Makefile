@@ -1,16 +1,18 @@
 NAME=ds_lib
 
 CC=gcc
-CFLAGS=-Werror -Wall -Wextra -O3
+CFLAGS=-Werror -Wall -Wextra -O3 -flto -march=native
 
 HEADERS=lib/queue.h lib/types.h
-SRC=lib/queue.c
+SRC=lib/types.c lib/queue.c lib/stack.c
 OBJ=$(SRC:.c=.o)
 
 TEST_HEADERS=test/test.h
-TEST_SRC=$(SRC) test/test.c test/test_queue.c
+TEST_SRC=$(SRC) test/test.c test/test_queue.c test/test_stack.c
 TEST_FLAGS=-lcheck -lm -lsubunit
 TEST_EXEC=data_structs_test
+
+
 
 
 static_lib: $(OBJ)
@@ -26,7 +28,7 @@ shared_lib: $(OBJ)
 
 
 tests: clean
-	$(CC) $(CFLAGS) $(TEST_SRC) -o $(TEST_EXEC) $(TEST_FLAGS)
+	$(CC) $(CFLAGS) -fsanitize=address -fsanitize=undefined $(TEST_SRC) -o $(TEST_EXEC) $(TEST_FLAGS) 
 	./$(TEST_EXEC)
 
 gcov_report: clean test
