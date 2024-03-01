@@ -10,7 +10,7 @@
  */
 static struct qnode *qnode_create(void *data, struct qnode *next,
                                   struct qnode *prev) {
-  struct qnode *nd = (struct qnode *)malloc(sizeof(struct qnode *));
+  struct qnode *nd = (struct qnode *)malloc(sizeof(struct qnode));
 
   nd->next = next;
   nd->data = data;
