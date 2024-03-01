@@ -2,12 +2,16 @@
  * @file queue.h Implementation of Queue data structure
  */
 
-#ifndef _DATA_STRUCT_QUEUE_H
-#define _DATA_STRUCT_QUEUE_H
+#ifndef _DATA_STRUCT_LIB_QUEUE_H
+#define _DATA_STRUCT_LIB_QUEUE_H
 
 #include <stdbool.h>  // bool
 #include <stddef.h>   // size_t
 #include <stdlib.h>   // malloc, free
+
+#include "types.h"
+
+#define qnode do_node
 
 /**
  * @struct Implements Queue data struct.

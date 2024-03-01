@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-#include "../queue/queue.h"
+#include "../lib/queue.h"
 
 Suite *suite_queue();
 

@@ -1,14 +1,20 @@
 CC=gcc
 CFLAGS=-Werror -Wall -Wextra
 
-HEADERS=queue/queue.h
-SRC=queue/queue.c
+HEADERS=lib/queue.h lib/types.h
+SRC=lib/queue.c
 
 
 TEST_HEADERS=test/test.h
 TEST_SRC=$(SRC) test/test.c test/test_queue.c
 TEST_FLAGS=-lcheck -lm -lsubunit
 TEST_EXEC=data_structs_test
+
+
+static_lib:
+	
+
+shared_lib:
 
 
 tests: clean

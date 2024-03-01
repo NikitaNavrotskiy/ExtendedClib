@@ -1,27 +1,6 @@
 #include "queue.h"
 
 /**
- * @struct Implements node for queue.
- *
- */
-struct qnode {
-  /**
-   * @brief User data to store in queue.
-   */
-  void *data;
-
-  /**
-   * @brief Pointer to the next node in queue.
-   */
-  struct qnode *next;
-
-  /**
-   * @brief Pointer to the previous node in queue.
-   */
-  struct qnode *prev;
-};
-
-/**
  * @brief private function to initialize qnode.
  *
  * @param data Pointer to data.
@@ -65,15 +44,23 @@ queue *queue_create() {
 inline void queue_push(queue *q, void *data) {
   q->front = qnode_create(data, q->front, NULL);
 
+  /* If Queue wasn't empty => adding reference from former front to the
+      new front */
   if (q->front->next != NULL) q->front->next->prev = q->front;
+  /* If back was NULL, so new element is front and back */
   if (q->back == NULL) q->back = q->front;
   q->size++;
 }
 
 void queue_pop(queue *q) {
+  /* Saving back to free it, but not lose back's references */
   struct qnode *tmp = q->back;
+
+  /* changing queue's back  */
   q->back = tmp->prev;
 
+  /* If new back elem is exist, changing its next reference, else => queue is
+       empty, so front is NULL */
   if (tmp->prev)
     tmp->prev->next = NULL;
   else
@@ -94,6 +81,8 @@ inline bool queue_empty(const queue *q) { return q->size == 0; }
 void queue_destroy(queue *q) {
   struct qnode *tmp = q->front;
 
+  /* Destroying queue from front one by one.
+    tmp is to save references of deleting element. */
   while (tmp) {
     struct qnode *tmp_next = tmp->next;
     qnode_destroy(tmp);
