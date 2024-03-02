@@ -1,37 +1,36 @@
 /**
- * @file stack.h Implementation of Stack data structure 
+ * @file stack.h Implementation of Stack data structure
  */
 
 #ifndef _DATA_STRUCT_LIB_STACK_H
 #define _DATA_STRUCT_LIB_STACK_H
 
-#include <stdbool.h>  // bool
-#include <stddef.h>   // size_t
-#include <stdlib.h>   // malloc, free
+#include <stdbool.h> // bool
+#include <stddef.h>  // size_t
+#include <stdlib.h>  // malloc, free
 
 #include "types.h"
-
 
 #define snode o_node
 
 /**
  * @struct stack
  * @brief Implements Stack data struct.
+ * @var size variable to store size of the stack.
+ * @var top Pointer to the top of stack.
  */
-typedef struct stack {
-  /**
-   * @brief variable to store size of the stack.
-   */
-  size_t size;
-
+typedef struct stack
+{
   /**
    * @brief Pointer to the top of stack.
    */
   struct snode *top;
+
+  /**
+   * @brief variable to store size of the stack.
+   */
+  size_t size;
 } stack;
-
-
-
 
 /**
  * @brief Public API functions of the stack.
@@ -39,11 +38,11 @@ typedef struct stack {
  */
 
 /**
- * @brief Function to create new stack. Allocates the memore. Should be
+ * @brief Function to create new stack. Allocates the memory. Should be
  * destroyed at the end.
- * @return Pointer to new stack..
+ * @return Pointer to new stack.
  */
-stack *stack_create();
+stack *stack_create ();
 
 /**
  * @brief Function to push new element to the stack's top..
@@ -51,14 +50,14 @@ stack *stack_create();
  * @param s Stack where new element will be placed.
  * @param data Data to push into the stack.
  */
-void stack_push(stack *s, dataptr data);
+void stack_push (stack *s, dataptr data);
 
 /**
  * @brief Function to pop top element from the stack.
  * Do not check if stack is empty.
  * @param s Stack to pop element.
  */
-void stack_pop(stack *s);
+void stack_pop (stack *s);
 
 /**
  * @brief Function to get top element from the Stack.
@@ -66,7 +65,7 @@ void stack_pop(stack *s);
  * @param s Stack to get top element from.
  * @return void* Element from the stack's t.
  */
-dataptr stack_top(const stack *s);
+dataptr stack_top (const stack *s);
 
 /**
  * @brief Function to get size of stack (number of elements)
@@ -74,7 +73,7 @@ dataptr stack_top(const stack *s);
  * @param s Stackto get size from.
  * @return size_t Actual size of stack..
  */
-size_t stack_size(const stack *s);
+size_t stack_size (const stack *s);
 
 /**
  * @brief Function to check if stack is empty
@@ -83,13 +82,13 @@ size_t stack_size(const stack *s);
  * @return true If stack is empty.
  * @return false If stack is not empty.
  */
-bool stack_empty(const stack *s);
+bool stack_empty (const stack *s);
 
 /**
  * @brief Function to destroy stack. Frees the memory.
  * Not checking that s == nullptr.
  * @param s Pointer of the stack to destroy.
  */
-void stack_destroy(stack *s);
+void stack_destroy (stack *s);
 
 #endif

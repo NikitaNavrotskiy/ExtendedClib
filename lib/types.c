@@ -1,3 +1,7 @@
+/**
+ * @file types.c Implementation of types functions.
+ */
+
 #include "types.h"
 
 #include <stdlib.h>
@@ -18,13 +22,13 @@ __do_node_create (dataptr data, struct do_node *next, struct do_node *prev)
   return nd;
 }
 
-inline void
+inline __attribute__ ((always_inline)) void
 __do_node_destroy (struct do_node *node)
 {
   free (node);
 }
 
-inline dataptr
+inline __attribute__ ((always_inline)) dataptr
 do_node_get (const struct do_node *nd)
 {
   return nd->data;
@@ -45,13 +49,13 @@ __o_node_create (dataptr data, struct o_node *next)
   return nd;
 }
 
-inline void
+inline __attribute__ ((always_inline)) void
 __o_node_destroy (struct o_node *node)
 {
   free (node);
 }
 
-inline dataptr
+inline __attribute__ ((always_inline)) dataptr
 o_node_get (const struct o_node *nd)
 {
   return nd->data;

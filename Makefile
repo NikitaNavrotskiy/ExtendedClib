@@ -1,11 +1,14 @@
 NAME=ds_lib
 
+
 CC=gcc
 CFLAGS=-Werror -Wall -Wextra -O3 -flto -march=native
 
-HEADERS=lib/queue.h lib/types.h
+
+HEADERS=lib/queue.h lib/types.h lib/stack.h
 SRC=lib/types.c lib/queue.c lib/stack.c
 OBJ=$(SRC:.c=.o)
+
 
 TEST_HEADERS=test/test.h
 TEST_SRC=$(SRC) test/test.c test/test_queue.c test/test_stack.c

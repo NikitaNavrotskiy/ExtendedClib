@@ -41,7 +41,7 @@ typedef struct queue
  */
 
 /**
- * @brief Function to create new queue. Allocates the memore. Should be
+ * @brief Function to create new queue. Allocates the memory. Should be
  * destroyed at the end.
  * @return Pointer to new queue.
  */

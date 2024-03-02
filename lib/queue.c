@@ -51,25 +51,25 @@ queue_pop (queue *q)
   __do_node_destroy (tmp);
 }
 
-inline dataptr
+inline __attribute__ ((always_inline)) dataptr
 queue_front (const queue *q)
 {
-  return q->front->data;
+  return do_node_get (q->front);
 }
 
-dataptr
+inline __attribute__ ((always_inline)) dataptr
 queue_back (const queue *q)
 {
-  return q->back->data;
+  return do_node_get (q->back);
 }
 
-inline size_t
+inline __attribute__ ((always_inline)) size_t
 queue_size (const queue *q)
 {
   return q->size;
 }
 
-inline bool
+inline __attribute__ ((always_inline)) bool
 queue_empty (const queue *q)
 {
   return q->size == 0;
