@@ -79,8 +79,10 @@ list_iterator list_begin(const list *l);
  * destroying instance of list.
  * 
  * @param l Pointer to the list.
+ * @param destr Pointer to function, to
+ * free memory of datas correctly.
  */
-void list_clear(list *l);
+void list_clear(list *l, void (*destr)(dptr data));
 
 /**
  * @brief Function to copy list.
@@ -89,9 +91,10 @@ void list_clear(list *l);
  * another pointer will be shared. 
  * 
  * @param l Pointer to the list.
+ * @param cpy Funtion that copying data.
  * @return Pointer to the new list.
  */
-list *list_copy(const list *l);
+list *list_copy(const list *l, dptr (*cpy)(const dptr data));
 
 /**
  * @brief Function to count <data> occurences.
@@ -123,8 +126,10 @@ size_t list_count_if(const list *l, bool (*predicate)(constdptr data));
  * l == nullptr.
  * 
  * @param l Pointer to the list.
+ * @param destr Pointer to function, to
+ * free memory of datas correctly.
  */
-void list_destroy(list *l);
+void list_destroy(list *l, void (*destr)(dptr data));
 
 /**
  * @brief Function returns Nullptr iterator.
@@ -174,8 +179,10 @@ bool list_empty(const list *l);
  * list on WHERE position.
  * 
  * @param where Points to the element to erase.
+ * @param destr Pointer to function, to
+ * free memory of datas correctly.
  */
-void list_erase(list_iterator where);
+void list_erase(list_iterator where, void (*destr)(dptr data));
 
 /**
  * @brief Function to erase elements from
@@ -185,8 +192,10 @@ void list_erase(list_iterator where);
  * in erasing range.
  * @param last Points to the last element
  * in erasing range.
+ * @param destr Pointer to function, to
+ * free memory of datas correctly.
  */
-void list_erase_range(list_iterator first, list_iterator last);
+void list_erase_range(list_iterator first, list_iterator last, void (*destr)(dptr data));
 
 /**
  * @brief Function returns front element.
@@ -281,16 +290,20 @@ list_iterator list_insert_many(list *l, list_iterator where, size_t count, ...);
  * the list.
  * 
  * @param l Pointer to the list.
+ * @param destr Pointer to function, to
+ * free memory of datas correctly.
  */
-void list_pop_back(list *l);
+void list_pop_back(list *l, void (*destr)(dptr data));
 
 /**
  * @brief Function to remove first element of
  * the list.
  * 
- * @param l Pointer to the list. 
+ * @param l Pointer to the list.
+ * @param destr Pointer to function, to
+ * free memory of datas correctly. 
  */
-void list_pop_front(list *l);
+void list_pop_front(list *l, void (*destr)(dptr data));
 
 /**
  * @brief Function to add new element to
@@ -319,19 +332,23 @@ void list_push_front(list *l, constdptr data);
  * @param cmp Function that return
  * true if <data> = element
  * false otherwise.
+ * @param destr Pointer to function, to
+ * free memory of datas correctly.
  */
-void list_remove(list *l, dptr data, bool (*cmp)(constdptr first, constdptr second));
+void list_remove(list *l, dptr data, bool (*cmp)(constdptr first, constdptr second), void (*destr)(dptr data));
 
 /**
  * @brief Function to remove all occurences, that
  * is true for <predicate>.
  * 
  * @param l Pointer to the list.
+ * @param destr Pointer to function, to
+ * free memory of datas correctly.
  * @param predicate Function that return
  * true if element should be removed and 
  * false otherwise.
  */
-void list_remove_if(list *l, bool (*predicate)(constdptr data));
+void list_remove_if(list *l, bool (*predicate)(constdptr data), void (*destr)(dptr data));
 
 /**
  * @brief Function to reverce elements in

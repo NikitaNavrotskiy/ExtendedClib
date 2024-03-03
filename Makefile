@@ -1,4 +1,4 @@
-NAME=ds_lib
+NAME=extended_lib_c
 
 
 CC=gcc
@@ -11,9 +11,9 @@ OBJ=$(SRC:.c=.o)
 
 
 TEST_HEADERS=test/test.h
-TEST_SRC=$(SRC) test/test.c test/test_queue.c test/test_stack.c
+TEST_SRC=$(SRC) test/test.c test/test_queue.c test/test_stack.c test/test_list.c
 TEST_FLAGS=-lcheck -lm -lsubunit
-TEST_EXEC=data_structs_test
+TEST_EXEC=$(NAME)_test
 
 
 
@@ -31,7 +31,7 @@ shared_lib: $(OBJ)
 
 
 tests: clean
-	$(CC) $(CFLAGS) -fsanitize=address -fsanitize=undefined $(TEST_SRC) -o $(TEST_EXEC) $(TEST_FLAGS) 
+	$(CC) $(CFLAGS) -g -fsanitize=address -fsanitize=undefined $(TEST_SRC) -o $(TEST_EXEC) $(TEST_FLAGS) 
 	./$(TEST_EXEC)
 
 gcov_report: clean test
@@ -49,7 +49,7 @@ clang-format:
 	clang-format -i $(SRC) $(TEST_SRC) $(HEADERS) $(TEST_HEADERS)
 
 clean:
-	rm -rf $(TEST_EXEC)
+	rm -rf $(TEST_EXEC) a.out
 	rm -rf *.info *.gcda *.gcno
 	rm -rf report/
 	rm -rf docs/*

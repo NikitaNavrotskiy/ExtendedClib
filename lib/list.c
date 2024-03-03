@@ -31,7 +31,7 @@ inline __attribute__ ((always_inline)) list_iterator list_begin(const list *l)
 }
 
 
-void list_clear(list *l)
+void list_clear(list *l, void (*destr)(dptr data))
 {
     struct lnode *tmp = l->front;
     
@@ -39,6 +39,7 @@ void list_clear(list *l)
     while(tmp)
     {
         struct lnode *tmp_next = tmp->next;
+        destr(tmp->data);
         __do_node_destroy(tmp);
         tmp = tmp_next;
     }
@@ -50,8 +51,10 @@ void list_clear(list *l)
 }
 
 
-list *list_copy(const list *l)
+list *list_copy(const list *l, dptr (*cpy)(const dptr data))
 {
+    if(!l)
+        return NULL;
     /* Creating dest list. */
     list * other = list_create();
     /* Copy values to dest list. */
@@ -59,11 +62,9 @@ list *list_copy(const list *l)
 
     while(cur)
     {
-        list_push_back(other, cur);
+        list_push_back(other, cpy(cur->data));
         cur = cur->next;
     }
-
-    other->size = l->size;
 
     return other;
 }
@@ -77,7 +78,7 @@ size_t list_count(const list *l, constdptr data, bool (*cmp)(constdptr first, co
     /* Goes through list one by one and count res. */
     while(cur)
     {
-        if(cmp(data, cur))
+        if(cmp(data, cur->data))
             res++;
         cur = cur->next;
     }
@@ -94,7 +95,7 @@ size_t list_count_if(const list *l, bool (*predicate)(constdptr data))
     /* Goes through list one by one and count res. */
     while(cur)
     {
-        if(predicate(cur))
+        if(predicate(cur->data))
             res++;
         cur = cur->next;
     }
@@ -103,10 +104,10 @@ size_t list_count_if(const list *l, bool (*predicate)(constdptr data))
 }
 
 
-inline void list_destroy(list *l)
+inline void list_destroy(list *l, void (*destr)(dptr data))
 {
     /* Deleting all nodes. */
-    list_clear(l);
+    list_clear(l, destr);
     /* Frees the memory for struct list. */
     free(l);
 }
@@ -142,7 +143,7 @@ inline __attribute__ ((always_inline)) bool list_empty(const list *l)
 }
 
 
-void list_erase(list_iterator where)
+void list_erase(list_iterator where, void (*destr)(dptr data))
 {
     /* Null check. */
     if(!where)
@@ -156,17 +157,19 @@ void list_erase(list_iterator where)
     if(where->prev)
         where->prev->next = where->next;
 
+    destr(tmp->data);
     __do_node_destroy(tmp);
 }
 
 
-void list_erase_range(list_iterator first, list_iterator last)
+void list_erase_range(list_iterator first, list_iterator last, void (*destr)(dptr data))
 {   
     struct lnode *tmp = first;
     /* Goes throw list from first to the last elem. */
     while(tmp && tmp != last)
     {
         struct lnode *tmp_next = tmp->next;
+        destr(tmp->data);
         __do_node_destroy(tmp);
         tmp = tmp_next;
     }
@@ -251,15 +254,17 @@ list_iterator list_insert(list *l, list_iterator where, constdptr data)
     /* New element goes to the end if !where. */
     if(!where)
         list_push_back(l, data);
-    else if(where->prev)
+    else if(!where->prev)
         list_push_front(l, data);
-
-    /* If new element going to the middle. */
-    if(where->prev)
-        where->prev->next = __do_node_create(data, where, where->prev);
-    where->prev = where->prev->next;
-    
-    l->size++;
+    else
+    {
+        /* If new element going to the middle. */
+        if(where->prev)
+            where->prev->next = __do_node_create(data, where, where->prev);
+        where->prev = where->prev->next;
+        
+        l->size++;
+    }
 
     return (where ? where->prev : l->front);
 }
@@ -291,7 +296,7 @@ list_iterator list_insert_many(list *l, list_iterator where, size_t count, ...)
 }
 
 
-void list_pop_back(list *l)
+void list_pop_back(list *l, void (*destr)(dptr data))
 {
     if(!l->back)
         return;
@@ -302,15 +307,21 @@ void list_pop_back(list *l)
     /* Changing back element */
     l->back = l->back->prev;
     
-    /* Deleting next reference of new l->back. */
-    l->back->next = NULL;
+    /* Deleting next reference of new l->back. 
+    If new l->back == NULL, so l->front should be
+    NULL too. */
+    if(l->back)
+        l->back->next = NULL;
+    else
+        l->front = NULL;
     l->size--;
     /* Deleting old front element. */
+    destr(tmp->data);
     __do_node_destroy(tmp);
 }
 
 
-void list_pop_front(list *l)
+void list_pop_front(list *l, void (*destr)(dptr data))
 {
     if(!l->front)
         return;
@@ -321,19 +332,24 @@ void list_pop_front(list *l)
     /* Changing front element */
     l->front = l->front->next;
     
-    /* Deleting prev reference of new l->front. */
-    l->front->prev = NULL;
+    /* Deleting prev reference of new l->front. 
+    If new l->front == NULL, so l->back should be
+    NULL too. */
+    if(l->front)
+        l->front->prev = NULL;
+    else
+        l->back = NULL;
     l->size--;
     /* Deleting old front element. */
+    destr(tmp->data);
     __do_node_destroy(tmp);
 }
 
 
 void list_push_back(list *l, constdptr data)
 {
-    /* Saving former last element. */
+    /* Saving old back element. */
     struct lnode *tmp = l->back;
-
     /* Creating new last element. */
     l->back = __do_node_create(data, NULL, l->back);
 
@@ -350,9 +366,8 @@ void list_push_back(list *l, constdptr data)
 
 void list_push_front(list *l, constdptr data)
 {
-    /* Saving format first element. */
+    /* Saving old front element. */
     struct lnode *tmp = l->front;
-
     /* Creating new first element. */
     l->front = __do_node_create(data, l->front, NULL);
 
@@ -367,7 +382,7 @@ void list_push_front(list *l, constdptr data)
 }
 
 
-void list_remove(list *l, dptr data, bool (*cmp)(constdptr first, constdptr second))
+void list_remove(list *l, dptr data, bool (*cmp)(constdptr first, constdptr second), void (*destr)(dptr data))
 {
     struct lnode *cur = l->front;
 
@@ -375,13 +390,13 @@ void list_remove(list *l, dptr data, bool (*cmp)(constdptr first, constdptr seco
     while(cur)
     {
         if(cmp(data, cur))
-            list_erase(cur);
+            list_erase(cur, destr);
         cur = cur->next;
     }
 }
 
 
-void list_remove_if(list *l, bool (*predicate)(constdptr data))
+void list_remove_if(list *l, bool (*predicate)(constdptr data), void (*destr)(dptr data))
 {
     struct lnode *cur = l->front;
 
@@ -389,7 +404,7 @@ void list_remove_if(list *l, bool (*predicate)(constdptr data))
     while(cur)
     {
         if(predicate(cur))
-            list_erase(cur);
+            list_erase(cur, destr);
         cur = cur->next;
     }
 }
