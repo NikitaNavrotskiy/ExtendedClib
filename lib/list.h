@@ -2,12 +2,14 @@
  * @file list.h Implementation of List data structure
  */
 
-#ifndef _DATA_STRUCTS_LIB_LIST_H
-#define _DATA_STRUCTS_LIB_LIST_H
+#ifndef _EXTENDED_C_LIB_LIB_LIST_H
+#define _EXTENDED_C_LIB_LIB_LIST_H
 
-#include <stdbool.h> // bool
-#include <stddef.h>  // size_t
-#include <stdlib.h>  // malloc, free
+#include <stdbool.h>  // bool
+#include <stddef.h>   // size_t
+#include <stdlib.h>   // malloc, free
+#include <string.h>   // mem* funcs
+#include <stdarg.h>   // va_list
 
 #include "types.h"
 
@@ -39,7 +41,7 @@ typedef struct list
    * @brief Pointer to the back of list.
    */
   struct lnode *back;
-} queue;
+} list;
 
 
 /**
@@ -59,9 +61,9 @@ list *list_create();
  * the list.
  * 
  * @param l Pointer to the list.
- * @return dataptr Last element.
+ * @return dptr Last element.
  */
-dataptr list_back(list *l);
+dptr list_back(const list *l);
 
 /**
  * @brief Function returns iterator to
@@ -82,7 +84,7 @@ void list_clear(list *l);
 
 /**
  * @brief Function to copy list.
- * Don't make deep copy, if dataptr is the
+ * Don't make deep copy, if dptr is the
  * pointer to the another pointer,
  * another pointer will be shared. 
  * 
@@ -90,6 +92,30 @@ void list_clear(list *l);
  * @return Pointer to the new list.
  */
 list *list_copy(const list *l);
+
+/**
+ * @brief Function to count <data> occurences.
+ * 
+ * @param l Pointer to the list.
+ * @param data Element to count.
+ * @param cmp Function that return
+ * true if <data> = element
+ * false otherwise.
+ * @return size_t Number of occurences.
+ */
+size_t list_count(const list *l, constdptr data, bool (*cmp)(constdptr first, constdptr second));
+
+/**
+ * @brief Function to count all occurences, that
+ * is true for <predicate>.
+ * 
+ * @param l Pointer to the list.
+ * @param predicate Function that return
+ * true if element should be counted and 
+ * false otherwise.
+ * @return size_t Number of occurences.
+ */
+size_t list_count_if(const list *l, bool (*predicate)(constdptr data));
 
 /**
  * @brief Function to Destroy list.
@@ -106,7 +132,7 @@ void list_destroy(list *l);
  * @param l Pointer to the list.
  * @return Null list_iterator 
  */
-list_iterator list_end(const list *l);
+list_iterator list_end();
 
 /**
  * @brief Function insert element to the WHERE position.
@@ -115,7 +141,7 @@ list_iterator list_end(const list *l);
  * @param where Position of the new element.
  * @param data New element.
  */
-void list_emplace(list *l, list_iterator where, dataptr data);
+void list_emplace(list *l, list_iterator where, constdptr data);
 
 /**
  * @brief Function insert element to the position of
@@ -124,7 +150,7 @@ void list_emplace(list *l, list_iterator where, dataptr data);
  * @param l Pointer to the list.
  * @param data New element.
  */
-void list_emplace_front(list *l, dataptr data);
+void list_emplace_front(list *l, constdptr data);
 
 /**
  * @brief Function insert element to the position of
@@ -133,7 +159,7 @@ void list_emplace_front(list *l, dataptr data);
  * @param l Pointer to the list.
  * @param data New element.
  */
-void list_emplace_back(list *l, dataptr data);
+void list_emplace_back(list *l, constdptr data);
 
 /**
  * @brief Function to check if list is empty.
@@ -169,9 +195,63 @@ void list_erase_range(list *l, list_iterator first, list_iterator last);
  * @brief Function returns front element.
  * 
  * @param l Pointer to the list.
- * @return dataptr Element on the front position.
+ * @return dptr Element on the front position.
  */
-dataptr list_front(const list *l);
+dptr list_front(const list *l);
+
+/**
+ * @brief Function to find first occurence
+ * of <data>.
+ * 
+ * @param l Pointer to the list.
+ * @param data Element to find.
+ * @param cmp Function that return
+ * true if <data> = element
+ * false otherwise.
+ * @return list_iterator to the first occurence
+ * or NULL if element hasn't found.
+ */
+list_iterator list_find(const list *l, constdptr data, bool (*cmp)(constdptr first, constdptr second));
+
+/**
+ * @brief Function to find first occurences, that
+ * is true for <predicate>.
+ * 
+ * @param l Pointer to the list.
+ * @param predicate Function that return
+ * true if element is equal and should be
+ * found and false otherwise.
+ * @return list_iterator to the first occurence
+ * or NULL if element hasn't found. 
+ */
+list_iterator list_find_if(const list *l, bool (*predicate)(constdptr data));
+
+/**
+ * @brief Function to find first occurence
+ * of <data> in reverse order.
+ * 
+ * @param l Pointer to the list.
+ * @param data Element to find.
+ * @param cmp Function that return
+ * true if <data> = element
+ * false otherwise.
+ * @return list_iterator to the first occurence in
+ * reverse order or NULL if element hasn't found.
+ */
+list_iterator list_rfind(const list *l, constdptr data, bool (*cmp)(constdptr first, constdptr second));
+
+/**
+ * @brief Function to find first occurences, 
+ * in reverse oreder, that is true for <predicate>.
+ * 
+ * @param l Pointer to the list.
+ * @param predicate Function that return
+ * true if element should be find and 
+ * false otherwise.
+ * @return list_iterator to the first occurence in
+ * reverse order or NULL if element hasn't found.
+ */
+list_iterator list_rfind_if(const list *l, bool (*predicate)(constdptr data));
 
 /**
  * @brief Function to insert New element to the
@@ -179,11 +259,12 @@ dataptr list_front(const list *l);
  * 
  * @param l Pointer to the list.
  * @param where Position of the new element.
+ * if where == NULL, placing element to the end.
  * @param data New element.
  * @return list_iterator Iterator to the new
  * element.
  */
-list_iterator list_insert(list *l, list_iterator where, dataptr data);
+list_iterator list_insert(list *l, list_iterator where, constdptr data);
 
 /**
  * @brief Function to insert many new elements with
@@ -191,12 +272,12 @@ list_iterator list_insert(list *l, list_iterator where, dataptr data);
  * 
  * @param l Pointer to the list.
  * @param where Position of the first of the new elements.
- * @param count Number of new elements with <data> value.
+ * @param count Number of elements in ... .
  * @param data Value of new elements.
  * @return list_iterator Iterator to the first
  * of the new elements.
  */
-list_iterator list_insert_many(list *l, list_iterator where, size_t count, dataptr data);
+list_iterator list_insert_many(list *l, list_iterator where, size_t count, ...);
 
 /**
  * @brief Function to remove last element of
@@ -221,7 +302,7 @@ void list_pop_front(list *l);
  * @param l Pointer to the list. 
  * @param data New element.
  */
-void list_push_back(list *l, dataptr data);
+void list_push_back(list *l, constdptr data);
 
 /**
  * @brief Function to append new element
@@ -230,7 +311,7 @@ void list_push_back(list *l, dataptr data);
  * @param l Pointer to the list.
  * @param data New element.
  */
-void list_push_front(list *l, dataptr data);
+void list_push_front(list *l, constdptr data);
 
 /**
  * @brief Function to remove all occurences of
@@ -238,8 +319,11 @@ void list_push_front(list *l, dataptr data);
  * 
  * @param l Pointer to the list.
  * @param data Element to remove.
+ * @param cmp Function that return
+ * true if <data> = element
+ * false otherwise.
  */
-void list_remove(list *l, dataptr data);
+void list_remove(list *l, dptr data, bool (*cmp)(constdptr first, constdptr second));
 
 /**
  * @brief Function to remove all occurences, that
@@ -250,7 +334,7 @@ void list_remove(list *l, dataptr data);
  * true if element should be removed and 
  * false otherwise.
  */
-void list_remove_if(list *l, bool (*predicate)(dataptr first, dataptr second));
+void list_remove_if(list *l, bool (*predicate)(constdptr data));
 
 /**
  * @brief Function to reverce elements in
@@ -278,7 +362,7 @@ size_t list_size(const list *l);
  * return int > 0 if first > second
  * return int = 0 if first = second.
  */
-void list_sort(list *l, int (*cmp)(dataptr first, dataptr second));
+void list_sort(list *l, int (*cmp)(constdptr first, constdptr second));
 
 /**
  * @brief Function to unique list,
@@ -290,6 +374,6 @@ void list_sort(list *l, int (*cmp)(dataptr first, dataptr second));
  * return true if first = second.
  * return fasle if first != second.
  */
-void list_unique(list *l, bool (*predicate)(dataptr first, dataptr second));
+void list_unique(list *l, bool (*predicate)(constdptr first, constdptr second));
 
 #endif

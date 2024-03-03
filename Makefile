@@ -5,8 +5,8 @@ CC=gcc
 CFLAGS=-Werror -Wall -Wextra -O3 -flto -march=native
 
 
-HEADERS=lib/queue.h lib/types.h lib/stack.h
-SRC=lib/types.c lib/queue.c lib/stack.c
+HEADERS=lib/queue.h lib/types.h lib/stack.h lib/list.h 
+SRC=lib/types.c lib/queue.c lib/stack.c lib/list.c
 OBJ=$(SRC:.c=.o)
 
 

@@ -3,13 +3,18 @@
  * to follow DRY principle.
  */
 
-#ifndef _DATA_STRUCTS_LIB_TYPES_H
-#define _DATA_STRUCTS_LIB_TYPES_H
+#ifndef _EXTENDED_C_LIB_LIB_TYPES_H
+#define _EXTENDED_C_LIB_LIB_TYPES_H
 
 /**
  * @brief Alias for void *.
  */
-typedef void *dataptr;
+typedef void *dptr;
+
+/**
+ * @brief Alias for const void *.
+ */
+typedef const void *constdptr;
 
 /**
  * @struct do_node
@@ -20,7 +25,7 @@ struct do_node
   /**
    * @brief User data to store.
    */
-  dataptr data;
+  dptr data;
 
   /**
    * @brief Pointer to the next node.
@@ -34,9 +39,10 @@ struct do_node
 };
 
 /**
- * @brief Public function to access the dataptr from the do_node
+ * @brief Public function to access the dptr from the do_node.
+ * Returns NULL, if nd == NULL.
  */
-dataptr do_node_get (const struct do_node *nd);
+dptr do_node_get (const struct do_node *nd);
 
 /**
  * @brief Api to work with do_node.
@@ -53,7 +59,7 @@ dataptr do_node_get (const struct do_node *nd);
  * @param prev Pointer to the previous do_node.
  * @return struct qnode* New created do_node.
  */
-struct do_node *__do_node_create (dataptr data, struct do_node *next,
+struct do_node *__do_node_create (constdptr data, struct do_node *next,
                                   struct do_node *prev);
 
 /**
@@ -74,7 +80,7 @@ struct o_node
   /**
    * @brief User data to store.
    */
-  dataptr data;
+  dptr data;
 
   /**
    * @brief Pointer to the next node.
@@ -83,9 +89,10 @@ struct o_node
 };
 
 /**
- * @brief Public function to access the dataptr from the do_node
+ * @brief Public function to access the dptr from the do_node.
+ * Returns NULL, if nd == NULL.
  */
-dataptr o_node_get (const struct o_node *nd);
+dptr o_node_get (const struct o_node *nd);
 
 /**
  * @brief Api to work with o_node.
@@ -101,7 +108,7 @@ dataptr o_node_get (const struct o_node *nd);
  * @param next Pointer to the next node.
  * @return  struct qnode* New created qnone.
  */
-struct o_node *__o_node_create (dataptr data, struct o_node *next);
+struct o_node *__o_node_create (constdptr data, struct o_node *next);
 
 /**
  * @brief Function to destroy o_node. Not checking if

@@ -11,12 +11,12 @@
  */
 
 struct do_node *
-__do_node_create (dataptr data, struct do_node *next, struct do_node *prev)
+__do_node_create (constdptr data, struct do_node *next, struct do_node *prev)
 {
   struct do_node *nd = (struct do_node *)malloc (sizeof (struct do_node));
 
   nd->next = next;
-  nd->data = data;
+  nd->data = (dptr)data;
   nd->prev = prev;
 
   return nd;
@@ -28,10 +28,12 @@ __do_node_destroy (struct do_node *node)
   free (node);
 }
 
-inline __attribute__ ((always_inline)) dataptr
+inline dptr
 do_node_get (const struct do_node *nd)
 {
-  return nd->data;
+  if(nd)
+    return nd->data;
+  return NULL;
 }
 
 /**
@@ -39,12 +41,12 @@ do_node_get (const struct do_node *nd)
  */
 
 struct o_node *
-__o_node_create (dataptr data, struct o_node *next)
+__o_node_create (constdptr data, struct o_node *next)
 {
   struct o_node *nd = (struct o_node *)malloc (sizeof (struct o_node));
 
   nd->next = next;
-  nd->data = data;
+  nd->data = (dptr)data;
 
   return nd;
 }
@@ -55,8 +57,10 @@ __o_node_destroy (struct o_node *node)
   free (node);
 }
 
-inline __attribute__ ((always_inline)) dataptr
+inline dptr
 o_node_get (const struct o_node *nd)
 {
-  return nd->data;
+  if(nd)
+    return nd->data;
+  return NULL;
 }

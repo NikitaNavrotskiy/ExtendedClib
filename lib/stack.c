@@ -16,7 +16,7 @@ stack_create ()
 }
 
 void
-stack_push (stack *s, dataptr data)
+stack_push (stack *s, constdptr data)
 {
   s->top = __o_node_create (data, s->top);
   s->size++;
@@ -36,7 +36,7 @@ stack_pop (stack *s)
   __o_node_destroy (tmp);
 }
 
-inline __attribute__ ((always_inline)) dataptr
+inline __attribute__ ((always_inline)) dptr
 stack_top (const stack *s)
 {
   return o_node_get (s->top);

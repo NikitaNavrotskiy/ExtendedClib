@@ -2,8 +2,8 @@
  * @file stack.h Implementation of Stack data structure
  */
 
-#ifndef _DATA_STRUCT_LIB_STACK_H
-#define _DATA_STRUCT_LIB_STACK_H
+#ifndef _EXTENDED_C_LIB_LIB_STACK_H
+#define _EXTENDED_C_LIB_LIB_STACK_H
 
 #include <stdbool.h> // bool
 #include <stddef.h>  // size_t
@@ -50,7 +50,7 @@ stack *stack_create ();
  * @param s Stack where new element will be placed.
  * @param data Data to push into the stack.
  */
-void stack_push (stack *s, dataptr data);
+void stack_push (stack *s, constdptr data);
 
 /**
  * @brief Function to pop top element from the stack.
@@ -65,7 +65,7 @@ void stack_pop (stack *s);
  * @param s Stack to get top element from.
  * @return void* Element from the stack's t.
  */
-dataptr stack_top (const stack *s);
+dptr stack_top (const stack *s);
 
 /**
  * @brief Function to get size of stack (number of elements)

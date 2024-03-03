@@ -17,7 +17,7 @@ queue_create ()
 }
 
 inline void
-queue_push (queue *q, dataptr data)
+queue_push (queue *q, constdptr data)
 {
   q->front = __do_node_create (data, q->front, NULL);
 
@@ -51,13 +51,13 @@ queue_pop (queue *q)
   __do_node_destroy (tmp);
 }
 
-inline __attribute__ ((always_inline)) dataptr
+inline __attribute__ ((always_inline)) dptr
 queue_front (const queue *q)
 {
   return do_node_get (q->front);
 }
 
-inline __attribute__ ((always_inline)) dataptr
+inline __attribute__ ((always_inline)) dptr
 queue_back (const queue *q)
 {
   return do_node_get (q->back);

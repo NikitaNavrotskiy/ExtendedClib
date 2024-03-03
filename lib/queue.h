@@ -2,8 +2,8 @@
  * @file queue.h Implementation of Queue data structure
  */
 
-#ifndef _DATA_STRUCT_LIB_QUEUE_H
-#define _DATA_STRUCT_LIB_QUEUE_H
+#ifndef _EXTENDED_C_LIB_LIB_QUEUE_H
+#define _EXTENDED_C_LIB_LIB_QUEUE_H
 
 #include <stdbool.h> // bool
 #include <stddef.h>  // size_t
@@ -53,7 +53,7 @@ queue *queue_create ();
  * @param q Queue where new element will be placed
  * @param data Data to push into the queue.
  */
-void queue_push (queue *q, void *data);
+void queue_push (queue *q, constdptr data);
 
 /**
  * @brief Function to pop last element from the queue
