@@ -31,7 +31,7 @@ __do_node_destroy (struct do_node *node)
 inline dptr
 do_node_get (const struct do_node *nd)
 {
-  if(nd)
+  if (nd)
     return nd->data;
   return NULL;
 }
@@ -60,7 +60,7 @@ __o_node_destroy (struct o_node *node)
 inline dptr
 o_node_get (const struct o_node *nd)
 {
-  if(nd)
+  if (nd)
     return nd->data;
   return NULL;
 }
