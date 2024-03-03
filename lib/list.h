@@ -129,7 +129,6 @@ void list_destroy(list *l);
 /**
  * @brief Function returns Nullptr iterator.
  * 
- * @param l Pointer to the list.
  * @return Null list_iterator 
  */
 list_iterator list_end();
@@ -174,22 +173,20 @@ bool list_empty(const list *l);
  * @brief Function to erase element from
  * list on WHERE position.
  * 
- * @param l Pointer to the list.
  * @param where Points to the element to erase.
  */
-void list_erase(list *l, list_iterator where);
+void list_erase(list_iterator where);
 
 /**
  * @brief Function to erase elements from
  * FIRST to LAST position.
  * 
- * @param l Pointer to the list.
  * @param first Points to the first element
  * in erasing range.
  * @param last Points to the last element
  * in erasing range.
  */
-void list_erase_range(list *l, list_iterator first, list_iterator last);
+void list_erase_range(list_iterator first, list_iterator last);
 
 /**
  * @brief Function returns front element.

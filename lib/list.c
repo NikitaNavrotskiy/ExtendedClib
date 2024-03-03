@@ -141,9 +141,39 @@ inline __attribute__ ((always_inline)) bool list_empty(const list *l)
     return l->size == 0;
 }
 
-void list_erase(list *l, list_iterator where);
 
-void list_erase_range(list *l, list_iterator first, list_iterator last);
+void list_erase(list_iterator where)
+{
+    /* Null check. */
+    if(!where)
+        return;
+
+    struct lnode *tmp = where;
+
+    /* Changing references. */
+    if(where->next)
+        where->next->prev = where->prev;
+    if(where->prev)
+        where->prev->next = where->next;
+
+    __do_node_destroy(tmp);
+}
+
+
+void list_erase_range(list_iterator first, list_iterator last)
+{   
+    struct lnode *tmp = first;
+    /* Goes throw list from first to the last elem. */
+    while(tmp && tmp != last)
+    {
+        struct lnode *tmp_next = tmp->next;
+        __do_node_destroy(tmp);
+        tmp = tmp_next;
+    }
+
+    if(last && tmp == last)
+        __do_node_destroy(tmp);
+}
 
 
 inline __attribute__ ((always_inline)) dptr list_front(const list *l)
@@ -345,7 +375,7 @@ void list_remove(list *l, dptr data, bool (*cmp)(constdptr first, constdptr seco
     while(cur)
     {
         if(cmp(data, cur))
-            list_erase(l, cur);
+            list_erase(cur);
         cur = cur->next;
     }
 }
@@ -359,7 +389,7 @@ void list_remove_if(list *l, bool (*predicate)(constdptr data))
     while(cur)
     {
         if(predicate(cur))
-            list_erase(l, cur);
+            list_erase(cur);
         cur = cur->next;
     }
 }
