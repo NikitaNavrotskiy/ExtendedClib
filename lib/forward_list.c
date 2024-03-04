@@ -4,7 +4,6 @@
 
 #include "forward_list.h"
 
-
 forward_list *
 forward_list_create ()
 {
@@ -273,11 +272,11 @@ forward_list_remove (forward_list *l, dptr data,
     {
       struct flnode *cur_next = cur->next;
 
-      if(cmp(data, cur->data))
-      {
-        forward_list_erase_after(l, cur_prev, destr);
-        cur = NULL;
-      }
+      if (cmp (data, cur->data))
+        {
+          forward_list_erase_after (l, cur_prev, destr);
+          cur = NULL;
+        }
       else
         cur_prev = cur;
       cur = cur_next;
@@ -296,11 +295,11 @@ forward_list_remove_if (forward_list *l, bool (*predicate) (constdptr data),
     {
       struct flnode *cur_next = cur->next;
 
-      if(predicate(cur->data))
-      {
-        forward_list_erase_after(l, cur_prev, destr);
-        cur = NULL;
-      }
+      if (predicate (cur->data))
+        {
+          forward_list_erase_after (l, cur_prev, destr);
+          cur = NULL;
+        }
       else
         cur_prev = cur;
       cur = cur_next;

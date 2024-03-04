@@ -149,6 +149,7 @@ START_TEST (list_test_1)
       ck_assert_uint_eq (*(int *)list_front (l), 0);
       ck_assert (list_begin (l)->data == (dptr)arr);
       ck_assert (list_end () == NULL);
+      ck_assert (list_rend () == NULL);
     }
 
   for (i = 999; i > 0; i--)

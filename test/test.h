@@ -6,14 +6,14 @@
 #include <stdlib.h>
 #include <time.h>
 
+#include "../lib/forward_list.h"
 #include "../lib/list.h"
 #include "../lib/queue.h"
 #include "../lib/stack.h"
-#include "../lib/forward_list.h"
 
 Suite *suite_queue ();
 Suite *suite_stack ();
 Suite *suite_list ();
-Suite *suite_forward_list();
+Suite *suite_forward_list ();
 
 #endif

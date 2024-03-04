@@ -1,4 +1,4 @@
-NAME=extended_lib_c
+NAME=extlibc
 
 
 CC=gcc
@@ -21,11 +21,11 @@ TEST_EXEC=$(NAME)_test
 
 
 static_lib: $(OBJ)
-	ar rcs $(NAME).a $< 
+	ar rcs $(NAME).a $<
 	
 
 shared_lib: $(OBJ)
-	$(CC) -shared -o $(NAME).so $(OBJ)
+	$(CC) -shared -fpic -o $(NAME).so $(OBJ)
 
 
 %.o: %.c
