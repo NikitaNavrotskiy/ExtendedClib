@@ -176,17 +176,20 @@ bool list_empty (const list *l);
 /**
  * @brief Function to erase element from
  * list on WHERE position.
- *
+ * @param l Pointer to the list.
  * @param where Points to the element to erase.
  * @param destr Pointer to function, to
  * free memory of datas correctly.
  */
-void list_erase (list_iterator where, void (*destr) (dptr data));
+void list_erase (list *l, list_iterator where, void (*destr) (dptr data));
 
 /**
  * @brief Function to erase elements from
- * FIRST to LAST position.
- *
+ * FIRST to LAST position (All includes). Programmer is
+ * responsible for correct <first> and
+ * <last> iterators. <last> maybe NULL to erase
+ * all from <first> to the <last> including.
+ * @param l Pointer to the list.
  * @param first Points to the first element
  * in erasing range.
  * @param last Points to the last element
@@ -194,11 +197,12 @@ void list_erase (list_iterator where, void (*destr) (dptr data));
  * @param destr Pointer to function, to
  * free memory of datas correctly.
  */
-void list_erase_range (list_iterator first, list_iterator last,
+void list_erase_range (list *l, list_iterator first, list_iterator last,
                        void (*destr) (dptr data));
 
 /**
  * @brief Function returns front element.
+ * Not safety if l->front is NULL.
  *
  * @param l Pointer to the list.
  * @return dptr Element on the front position.

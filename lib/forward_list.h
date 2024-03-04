@@ -1,5 +1,5 @@
 /**
- * @file list.h Implementation of List data structure
+ * @file forward_list.h Implementation of List data structure
  */
 
 #ifndef _EXTENDED_C_LIB_LIB_FORWARD_LIST_H
@@ -201,8 +201,9 @@ forward_list_iterator forward_list_find (const forward_list *l, constdptr data,
  * @return forward_list_iterator to the first occurence
  * or NULL if element hasn't found.
  */
-forward_list_iterator list_find_if (const forward_list *l,
-                                    bool (*predicate) (constdptr data));
+forward_list_iterator
+forward_list_find_if (const forward_list *l,
+                      bool (*predicate) (constdptr data));
 
 /**
  * @brief Function to insert New element after

@@ -142,7 +142,7 @@ list_empty (const list *l)
 }
 
 void
-list_erase (list_iterator where, void (*destr) (dptr data))
+list_erase (list *l, list_iterator where, void (*destr) (dptr data))
 {
   /* Null check. */
   if (!where)
@@ -153,29 +153,34 @@ list_erase (list_iterator where, void (*destr) (dptr data))
   /* Changing references. */
   if (where->next)
     where->next->prev = where->prev;
+  else
+    l->back = where->prev;
   if (where->prev)
     where->prev->next = where->next;
+  else
+    l->front = where->next;
+  l->size--;
 
   destr (tmp->data);
   __do_node_destroy (tmp);
 }
 
 void
-list_erase_range (list_iterator first, list_iterator last,
+list_erase_range (list *l, list_iterator first, list_iterator last,
                   void (*destr) (dptr data))
 {
   struct lnode *tmp = first;
   /* Goes throw list from first to the last elem. */
+
   while (tmp && tmp != last)
     {
       struct lnode *tmp_next = tmp->next;
-      destr (tmp->data);
-      __do_node_destroy (tmp);
+      list_erase (l, tmp, destr);
       tmp = tmp_next;
     }
 
   if (last && tmp == last)
-    __do_node_destroy (tmp);
+    list_erase (l, tmp, destr);
 }
 
 inline __attribute__ ((always_inline)) dptr
@@ -193,12 +198,12 @@ list_find (const list *l, constdptr data,
   /* Find first occurence, that cmp() return true. */
   while (cur)
     {
-      if (cmp (data, cur))
+      if (cmp (data, cur->data))
         return cur;
       cur = cur->next;
     }
 
-  return NULL;
+  return list_end ();
 }
 
 list_iterator
@@ -209,12 +214,12 @@ list_find_if (const list *l, bool (*predicate) (constdptr data))
   /* Find first occurence, that predicate() return true. */
   while (cur)
     {
-      if (predicate (cur))
+      if (predicate (cur->data))
         return cur;
       cur = cur->next;
     }
 
-  return NULL;
+  return list_end ();
 }
 
 list_iterator
@@ -226,12 +231,12 @@ list_rfind (const list *l, constdptr data,
   /* Find first occurence in reverse order, that cmp() return true. */
   while (cur)
     {
-      if (cmp (data, cur))
+      if (cmp (data, cur->data))
         return cur;
       cur = cur->prev;
     }
 
-  return NULL;
+  return list_end ();
 }
 
 list_iterator
@@ -242,12 +247,12 @@ list_rfind_if (const list *l, bool (*predicate) (constdptr data))
   /* Find first occurence in reverse order, that predicate() return true. */
   while (cur)
     {
-      if (predicate (cur))
+      if (predicate (cur->data))
         return cur;
       cur = cur->prev;
     }
 
-  return NULL;
+  return list_end ();
 }
 
 list_iterator
@@ -255,20 +260,25 @@ list_insert (list *l, list_iterator where, constdptr data)
 {
   /* New element goes to the end if !where. */
   if (!where)
-    list_push_back (l, data);
+    {
+      list_push_back (l, data);
+      return l->back;
+    }
   else if (!where->prev)
-    list_push_front (l, data);
+    {
+      list_push_front (l, data);
+      return l->front;
+    }
   else
     {
       /* If new element going to the middle. */
-      if (where->prev)
-        where->prev->next = __do_node_create (data, where, where->prev);
+      where->prev->next = __do_node_create (data, where, where->prev);
       where->prev = where->prev->next;
 
       l->size++;
     }
 
-  return (where ? where->prev : l->front);
+  return where->prev;
 }
 
 list_iterator
@@ -286,6 +296,8 @@ list_insert_many (list *l, list_iterator where, size_t count, ...)
       dptr cur = va_arg (args, dptr);
       struct lnode *tmp = list_insert (l, where, cur);
 
+      /* Changing inserting place to the next position. */
+      where = tmp->next;
       /* Writing result list_iterator. */
       if (i == 0)
         res = tmp;
@@ -393,9 +405,10 @@ list_remove (list *l, dptr data,
   /* Deleting all nodes if <cmp> returns true. */
   while (cur)
     {
-      if (cmp (data, cur))
-        list_erase (cur, destr);
-      cur = cur->next;
+      struct lnode *cur_next = cur->next;
+      if (cmp (data, cur->data))
+        list_erase (l, cur, destr);
+      cur = cur_next;
     }
 }
 
@@ -408,9 +421,10 @@ list_remove_if (list *l, bool (*predicate) (constdptr data),
   /* Deleting all nodes if <predicate> returns true. */
   while (cur)
     {
-      if (predicate (cur))
-        list_erase (cur, destr);
-      cur = cur->next;
+      struct lnode *cur_next = cur->next;
+      if (predicate (cur->data))
+        list_erase (l, cur, destr);
+      cur = cur_next;
     }
 }
 
