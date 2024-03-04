@@ -710,11 +710,11 @@ START_TEST (list_test_11)
 
   ck_assert (list_find (l, &pattern, cmp) == list_begin (l));
   list_erase (l, list_begin (l), standart_destructor);
-  ck_assert (list_find (l, &pattern, cmp) == l->back->prev->prev->prev);
+  ck_assert (list_find (l, &pattern, cmp) == list_rbegin(l)->prev->prev->prev);
   list_erase (l, l->back->prev->prev->prev, standart_destructor);
-  ck_assert (list_find (l, &pattern, cmp) == l->back->prev->prev);
+  ck_assert (list_find (l, &pattern, cmp) == list_rbegin(l)->prev->prev);
   list_erase (l, l->back->prev->prev, standart_destructor);
-  ck_assert (list_find (l, &pattern, cmp) == l->back);
+  ck_assert (list_find (l, &pattern, cmp) == list_rbegin(l));
   list_erase (l, l->back, standart_destructor);
   ck_assert (list_find (l, &pattern, cmp) == list_end ());
   list_clear (l, standart_destructor);

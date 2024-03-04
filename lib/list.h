@@ -68,9 +68,19 @@ dptr list_back (const list *l);
  * first element.
  *
  * @param l Pointer to the list.
- * @return list_iterator.
+ * @return list_iterator to the first element.
  */
 list_iterator list_begin (const list *l);
+
+/**
+ * @brief Function returns iterator to
+ * first element in reverse list.
+ *
+ * @param l Pointer to the list.
+ * @return list_iterator to the first element
+ * in reverse order.
+ */
+list_iterator list_rbegin (const list *l);
 
 /**
  * @brief Function to clear list, but not
@@ -131,11 +141,22 @@ size_t list_count_if (const list *l, bool (*predicate) (constdptr data));
 void list_destroy (list *l, void (*destr) (dptr data));
 
 /**
- * @brief Function returns Nullptr iterator.
+ * @brief Function returns Nullptr iterator,
+ * aka iterator to the next element after
+ * last.
  *
  * @return Null list_iterator
  */
 list_iterator list_end ();
+
+/**
+ * @brief Function returns Nullptr iterator,
+ * aka iterator to the next element after
+ * last in reverse list.
+ *
+ * @return Null list_iterator
+ */
+list_iterator list_rend ();
 
 /**
  * @brief Function insert element to the WHERE position.

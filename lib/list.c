@@ -28,6 +28,12 @@ list_begin (const list *l)
   return l->front;
 }
 
+inline __attribute__ ((always_inline)) list_iterator
+list_rbegin (const list *l)
+{
+  return l->back;
+}
+
 void
 list_clear (list *l, void (*destr) (dptr data))
 {
@@ -113,6 +119,12 @@ list_destroy (list *l, void (*destr) (dptr data))
 
 inline __attribute__ ((always_inline)) list_iterator
 list_end ()
+{
+  return NULL;
+}
+
+inline __attribute__ ((always_inline)) list_iterator
+list_rend ()
 {
   return NULL;
 }
@@ -236,7 +248,7 @@ list_rfind (const list *l, constdptr data,
       cur = cur->prev;
     }
 
-  return list_end ();
+  return list_rend ();
 }
 
 list_iterator
@@ -252,7 +264,7 @@ list_rfind_if (const list *l, bool (*predicate) (constdptr data))
       cur = cur->prev;
     }
 
-  return list_end ();
+  return list_rend ();
 }
 
 list_iterator
