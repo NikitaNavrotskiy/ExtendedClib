@@ -13,7 +13,7 @@
 
 #include "types.h"
 
-#define flnode do_node
+#define flnode o_node
 
 /**
  * @brief Alias for do_node pointer
@@ -157,17 +157,19 @@ bool forward_list_empty (const forward_list *l);
 /**
  * @brief Function to erase element from
  * forward list after WHERE position.
- *
+ * If WHERE == NULL, removing first element.
+ * @param l Pointer to the forward list.
  * @param where Points to the element to erase
  * arter.
  * @param destr Pointer to function, to
  * free memory of datas correctly.
  */
-void forward_list_erase (forward_list_iterator where,
-                         void (*destr) (dptr data));
+void forward_list_erase_after (forward_list *l, forward_list_iterator where,
+                               void (*destr) (dptr data));
 
 /**
  * @brief Function returns front element.
+ * If <where> == NULL, removing first elem.
  *
  * @param l Pointer to the forward list.
  * @return dptr Element on the front position.

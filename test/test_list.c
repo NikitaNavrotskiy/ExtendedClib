@@ -1,43 +1,43 @@
 #include "test.h"
 
-void
+static void
 standart_destructor (dptr data)
 {
   data = data;
   return;
 }
 
-bool
+static bool
 cmp (constdptr f, constdptr s)
 {
   return (*(int *)f == *(int *)s);
 }
 
-bool
+static bool
 predicate1 (constdptr d)
 {
   return (*(int *)d) >= 2 && (*(int *)d) < 4;
 }
 
-bool
+static bool
 predicate2 (constdptr d)
 {
   return (*(int *)d) < 2 || (*(int *)d) > 3;
 }
 
-bool
+static bool
 predicate3 (constdptr d)
 {
   return (*(int *)d == 2 || (*(int *)d == 3));
 }
 
-bool
+static bool
 predicate4 (constdptr d)
 {
   return (*(int *)d > 4);
 }
 
-dptr
+static dptr
 copy_func (dptr val)
 {
   return val;
@@ -196,7 +196,7 @@ START_TEST (list_test_1)
       ck_assert (list_end () == NULL);
     }
 
-  list_pop_back (l, standart_destructor);
+  list_pop_front (l, standart_destructor);
   ck_assert (list_empty (l));
   ck_assert (list_size (l) == 0);
   ck_assert (list_back (l) == NULL);
@@ -710,11 +710,12 @@ START_TEST (list_test_11)
 
   ck_assert (list_find (l, &pattern, cmp) == list_begin (l));
   list_erase (l, list_begin (l), standart_destructor);
-  ck_assert (list_find (l, &pattern, cmp) == list_rbegin(l)->prev->prev->prev);
+  ck_assert (list_find (l, &pattern, cmp)
+             == list_rbegin (l)->prev->prev->prev);
   list_erase (l, l->back->prev->prev->prev, standart_destructor);
-  ck_assert (list_find (l, &pattern, cmp) == list_rbegin(l)->prev->prev);
+  ck_assert (list_find (l, &pattern, cmp) == list_rbegin (l)->prev->prev);
   list_erase (l, l->back->prev->prev, standart_destructor);
-  ck_assert (list_find (l, &pattern, cmp) == list_rbegin(l));
+  ck_assert (list_find (l, &pattern, cmp) == list_rbegin (l));
   list_erase (l, l->back, standart_destructor);
   ck_assert (list_find (l, &pattern, cmp) == list_end ());
   list_clear (l, standart_destructor);

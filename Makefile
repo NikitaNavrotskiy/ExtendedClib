@@ -6,12 +6,14 @@ CFLAGS=-Werror -Wall -Wextra -O3 -flto -march=native
 
 
 HEADERS=lib/queue.h lib/types.h lib/stack.h lib/list.h  lib/forward_list.h
-SRC=lib/types.c lib/queue.c lib/stack.c lib/list.c
+SRC=lib/types.c lib/queue.c lib/stack.c lib/list.c lib/forward_list.c
 OBJ=$(SRC:.c=.o)
 
 
 TEST_HEADERS=test/test.h
-TEST_SRC=$(SRC) test/test.c test/test_queue.c test/test_stack.c test/test_list.c
+TEST_SRC=$(SRC) test/test.c test/test_queue.c test/test_stack.c test/test_list.c \
+	test/test_forward_list.c
+
 TEST_FLAGS=-lcheck -lm -lsubunit
 TEST_EXEC=$(NAME)_test
 
