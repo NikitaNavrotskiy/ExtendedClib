@@ -68,17 +68,17 @@ void queue_pop (queue *q, void (*destr) (dptr data));
  * @brief Function to get front element.
  *
  * @param q Queue to get front element from.
- * @return void* Element from the queue's front.
+ * @return dptr Element from the queue's front.
  */
-void *queue_front (const queue *q);
+dptr queue_front (const queue *q);
 
 /**
  * @brief Function to get back element.
  *
  * @param q Queue to get back element from.
- * @return void* Element from the queue's back.
+ * @return dptr Element from the queue's back.
  */
-void *queue_back (const queue *q);
+dptr queue_back (const queue *q);
 
 /**
  * @brief Function to get size of queue (number of elements)

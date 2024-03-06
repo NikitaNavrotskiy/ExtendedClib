@@ -1,4 +1,4 @@
-NAME=extlibc
+NAME=xlibc
 
 
 CC=gcc

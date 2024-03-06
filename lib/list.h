@@ -208,7 +208,7 @@ void list_erase (list *l, list_iterator where, void (*destr) (dptr data));
  * FIRST to LAST position (All includes). Programmer is
  * responsible for correct <first> and
  * <last> iterators. <last> maybe NULL to erase
- * all from <first> to the <last> including.
+ * all from <first> to the last including.
  * @param l Pointer to the list.
  * @param first Points to the first element
  * in erasing range.
