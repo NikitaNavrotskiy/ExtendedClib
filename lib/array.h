@@ -302,6 +302,7 @@ dptr array_front (array *arr);
 
 /**
  * @brief Inserting element <data> into <where> position.
+ * If <where> == NULL, insert to the end.
  *
  * @param arr Pointer to array instance.
  * @param where Place to insert element.

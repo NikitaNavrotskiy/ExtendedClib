@@ -25,7 +25,7 @@ __array_increase_capacity (array *arr, size_t capacity)
   arr->vec = ptr;
 }
 
-static void
+inline static void
 __array_increase_capacity_if_need (array *arr)
 {
   if (arr->size == arr->capacity)
@@ -33,10 +33,16 @@ __array_increase_capacity_if_need (array *arr)
         arr, (size_t)(arr->capacity * ARRAY_CAPACITY_INCREASE_FACTOR));
 }
 
-static size_t
+inline static size_t
 __array_count_index_of_iterator (array *arr, array_iterator where)
 {
-  return (size_t)(where - arr->vec) / (size_t)(where);
+  return (size_t)(where - arr->vec);
+}
+
+inline static bool
+__array_is_iterator_from_range (array *arr, array_iterator where)
+{
+  return arr->vec <= where && where < arr->vec + arr->size;
 }
 
 /**
@@ -183,8 +189,6 @@ array_destroy (array *arr, void (*destr) (dptr data))
 inline array_iterator
 array_emplace (array *arr, array_iterator where, dptr data)
 {
-  if (!arr)
-    return array_end ();
   return array_insert (arr, where, data);
 }
 
@@ -222,6 +226,9 @@ array_erase (array *arr, array_iterator where, void (*destr) (dptr data))
   if (!arr || !where)
     return array_end ();
 
+  if (!__array_is_iterator_from_range (arr, where))
+    return array_end ();
+
   dptr tmp = *where;
   size_t index = __array_count_index_of_iterator (arr, where);
 
@@ -237,7 +244,7 @@ array_erase (array *arr, array_iterator where, void (*destr) (dptr data))
     arr->vec[i - 1] = arr->vec[i];
   arr->size--;
 
-  return arr->vec[index];
+  return arr->vec + index;
 }
 
 array_iterator array_erase_many (array *arr, array_iterator first,
@@ -317,17 +324,27 @@ array_rfind_if (const array *arr, bool (*predicate) (constdptr data))
 array_iterator
 array_insert (array *arr, array_iterator where, dptr data)
 {
-  if (!arr || !where)
+  if (!arr)
     return array_end ();
+
+  if (!where)
+    {
+      array_push_back (arr, data);
+      return arr->vec[arr->size - 1];
+    }
+
+  if (!__array_is_iterator_from_range (arr, where))
+    return array_end ();
+
+  long index = (long)__array_count_index_of_iterator (arr, where);
 
   __array_increase_capacity_if_need (arr);
 
-  size_t index = __array_count_index_of_iterator (arr, where);
-
-  for (size_t i = arr->size - 1; i >= index; i++)
+  for (int i = arr->size - 1; i >= index; i--)
     arr->vec[i + 1] = arr->vec[i];
 
   arr->vec[index] = data;
+  arr->size++;
 
   return arr->vec + index;
 }
@@ -360,7 +377,7 @@ array_push_back (array *arr, dptr data)
 inline void
 array_reserve (array *arr, size_t count)
 {
-  if (!arr)
+  if (!arr || count < arr->size)
     return;
   __array_increase_capacity (arr, count);
 }
