@@ -6,15 +6,16 @@ CFLAGS=-Werror -Wall -Wextra -O3 -march=native
 
 
 HEADERS=lib/queue.h lib/types.h lib/stack.h lib/list.h  lib/forward_list.h \
-	lib/linear_allocator.h lib/pool_allocator.h
+	lib/array.h lib/linear_allocator.h lib/pool_allocator.h
 SRC=lib/types.c lib/queue.c lib/stack.c lib/list.c lib/forward_list.c \
-	lib/linear_allocator.c lib/pool_allocator.c
+	lib/array.c lib/linear_allocator.c lib/pool_allocator.c
 OBJ=$(SRC:.c=.o)
 
 
 TEST_HEADERS=test/test.h
 TEST_SRC=$(SRC) test/test.c test/test_queue.c test/test_stack.c test/test_list.c \
-	test/test_forward_list.c test/test_linear_allocator.c test/test_pool_allocator.c \
+	test/test_forward_list.c test/test_array.c test/test_linear_allocator.c \
+	test/test_pool_allocator.c 
 
 TEST_FLAGS=-lcheck -lm -lsubunit
 TEST_EXEC=$(NAME)_test
@@ -53,6 +54,18 @@ doc:
 
 clang-format:
 	clang-format -i $(SRC) $(TEST_SRC) $(HEADERS) $(TEST_HEADERS)
+
+install:
+
+
+uninstall:
+
+
+dvi:
+
+
+dist:
+
 
 clean:
 	rm -rf $(TEST_EXEC) a.out

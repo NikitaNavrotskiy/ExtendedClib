@@ -1,165 +1,396 @@
 /**
- * @file array.c Implementation of public array's API functions. 
+ * @file array.c Implementation of public array's API functions.
  */
 
 #include "array.h"
 
+/**
+ * @brief Private functions.
+ *
+ */
 
-array *array_create(size_t size)
+/**
+ * @brief Function to increase capacity if
+ * capacity == size and new more space.
+ *
+ * @param arr Pointer to array instance.
+ * @param capacity Capacity.
+ */
+static void
+__array_increase_capacity (array *arr, size_t capacity)
 {
-    array *arr = (array *)malloc(sizeof(array));
+  dptr *ptr = realloc (arr->vec, sizeof (dptr) * capacity);
 
-    arr->size = size;
-    arr->capacity = (size_t)(arr->size * ARRAY_CAPACITY_INCREASE_FACTOR);
-    arr->vec = malloc(sizeof(dptr) * arr->capacity);
-
-    return arr;
+  arr->capacity = capacity;
+  arr->vec = ptr;
 }
 
-inline dptr array_at(array *arr, size_t pos)
+static void
+__array_increase_capacity_if_need (array *arr)
 {
-    if(pos < arr->size)
-        return arr->vec[pos];
+  if (arr->size == arr->capacity)
+    __array_increase_capacity (
+        arr, (size_t)(arr->capacity * ARRAY_CAPACITY_INCREASE_FACTOR));
+}
+
+static size_t
+__array_count_index_of_iterator (array *arr, array_iterator where)
+{
+  return (size_t)(where - arr->vec) / (size_t)(where);
+}
+
+/**
+ * @brief Public API functions of the array implementation.
+ *
+ */
+
+array *
+array_create (size_t capacity)
+{
+  array *arr = (array *)malloc (sizeof (array));
+
+  arr->size = 0;
+  arr->capacity = (capacity == 0) ? ARRAY_CAPACITY_DEFAULT : capacity;
+  arr->vec = (dptr *)malloc (sizeof (dptr) * arr->capacity);
+
+  return arr;
+}
+
+inline dptr
+array_at (array *arr, size_t pos)
+{
+  if (arr && pos < arr->size)
+    return arr->vec[pos];
+  return NULL;
+}
+
+inline dptr
+array_back (array *arr)
+{
+  if (!arr || arr->size == 0)
     return NULL;
+  return arr->vec[arr->size - 1];
 }
 
-inline
-dptr array_back(array *arr)
+inline array_iterator
+array_begin (array *arr)
 {
-    if(arr->size == 0)
-        return NULL;
-    return arr->vec[arr->size - 1];
-}
-
-inline
-array_iterator array_begin(array *arr)
-{
-    if(arr->size == 0)
-        return NULL;
-    return arr->vec;
-}
-
-inline
-array_iterator array_rbegin(array *arr)
-{
-    if(arr->size == 0)
-        return NULL;
-    return arr->vec + arr->size - 1;    
-}
-
-inline __attribute__ ((always_inline))
-size_t array_capacity(array *arr)
-{
-    return arr->capacity;
-}
-
-void array_clear(array *arr, void (*destr)(dptr data))
-{
-    for(size_t i = 0; i < arr->size; i++)
-        destr(arr->vec[i]);
-
-    arr->size = 0;
-}
-
-array *array_copy (const array *arr, dptr (*cpy) (const dptr data));
-
-
-size_t array_count (const array *arr, constdptr data,
-                   bool (*cmp) (constdptr first, constdptr second));
-
-size_t array_count_if (const array *arr, bool (*predicate) (constdptr data));
-
-inline
-dptr array_data(array *arr)
-{
-    return array_front(arr);
-}
-
-void array_destroy(array *arr, void (*destr)(dptr data))
-{
-    array_clear(arr, destr);
-    free(arr->vec);
-    free(arr);
-}
-
-inline
-array_iterator array_emplace(array *arr, array_iterator where, dptr data)
-{
-    return array_insert(arr, where, data);
-}
-
-inline
-void array_emplace_back(array *arr, dptr data)
-{
-    array_push_back(arr, data);
-}
-
-bool array_empty(array *arr)
-{
-    return arr->size == 0;
-}
-
-array_iterator array_end()
-{
+  if (!arr || arr->size == 0)
     return NULL;
+  return arr->vec;
 }
 
-array_iterator array_rend()
+inline array_iterator
+array_rbegin (array *arr)
 {
+  if (!arr || arr->size == 0)
     return NULL;
+  return arr->vec + arr->size - 1;
 }
 
-array_iterator array_erase(array *arr, array_iterator where, void (*destr)(dptr data));
-
-array_iterator array_erase_many(array *arr, array_iterator first, array_iterator last, void (*destr)(dptr data));
-
-dptr array_front(array *arr)
+inline __attribute__ ((always_inline)) size_t
+array_capacity (array *arr)
 {
-    if(arr->size == 0)
-        return NULL;
-    return arr->vec;
+  if (!arr)
+    return 0;
+  return arr->capacity;
 }
 
-array_iterator array_find (const array *arr, constdptr data,
-                         bool (*cmp) (constdptr first, constdptr second));
-
-array_iterator array_find_if (const array *arr, bool (*predicate) (constdptr data));
-
-array_iterator array_insert(array *arr, array_iterator where, dptr data);
-
-array_iterator array_insert_many(array *arr, array_iterator where, size_t count, ...);
-
-void array_pop_back(array *arr, dptr data, void (*destr)(dptr data));
-
-void array_push_back(array *arr, dptr data);
-
-void array_reserve(array *arr, size_t count)
+void
+array_clear (array *arr, void (*destr) (dptr data))
 {
-    arr->capacity = count;
-    arr->vec = realloc(arr->vec, sizeof(dptr) * count);
+  if (!arr)
+    return;
+
+  for (size_t i = 0; i < arr->size; i++)
+    destr (arr->vec[i]);
+
+  arr->size = 0;
 }
 
-void array_shrink_to_fit(array *arr)
+array *
+array_copy (const array *arr, dptr (*cpy) (constdptr data))
 {
-    arr->vec = realloc(arr->vec, sizeof(dptr) * arr->size);
+  if (!arr)
+    return NULL;
+
+  array *other = (array *)malloc (sizeof (array));
+
+  other->vec = malloc (sizeof (dptr) * arr->capacity);
+  other->capacity = arr->capacity;
+  other->size = arr->size;
+
+  for (size_t i = 0; i < other->size; i++)
+    other->vec[i] = cpy (arr->vec[i]);
+
+  return other;
+}
+
+size_t
+array_count (const array *arr, constdptr data,
+             bool (*cmp) (constdptr first, constdptr second))
+{
+  if (!arr)
+    return 0;
+
+  size_t res = 0;
+
+  for (size_t i = 0; i < arr->size; i++)
+    {
+      if (cmp (data, arr->vec[i]))
+        res++;
+    }
+
+  return res;
+}
+
+size_t
+array_count_if (const array *arr, bool (*predicate) (constdptr data))
+{
+  if (!arr)
+    return 0;
+
+  size_t res = 0;
+
+  for (size_t i = 0; i < arr->size; i++)
+    {
+      if (predicate (arr->vec[i]))
+        res++;
+    }
+
+  return res;
+}
+
+inline dptr
+array_data (array *arr)
+{
+  if (!arr)
+    return array_end ();
+  return arr->vec;
+}
+
+void
+array_destroy (array *arr, void (*destr) (dptr data))
+{
+  if (!arr)
+    return;
+
+  array_clear (arr, destr);
+  free (arr->vec);
+  free (arr);
+}
+
+inline array_iterator
+array_emplace (array *arr, array_iterator where, dptr data)
+{
+  if (!arr)
+    return array_end ();
+  return array_insert (arr, where, data);
+}
+
+inline void
+array_emplace_back (array *arr, dptr data)
+{
+  if (!arr)
+    return;
+  array_push_back (arr, data);
+}
+
+bool
+array_empty (array *arr)
+{
+  if (!arr)
+    return true;
+  return arr->size == 0;
+}
+
+array_iterator
+array_end ()
+{
+  return NULL;
+}
+
+array_iterator
+array_rend ()
+{
+  return NULL;
+}
+
+array_iterator
+array_erase (array *arr, array_iterator where, void (*destr) (dptr data))
+{
+  if (!arr || !where)
+    return array_end ();
+
+  dptr tmp = *where;
+  size_t index = __array_count_index_of_iterator (arr, where);
+
+  destr (tmp);
+
+  if (index == arr->size - 1)
+    {
+      array_pop_back (arr, destr);
+      return array_end ();
+    }
+
+  for (size_t i = index + 1; i < arr->size; i++)
+    arr->vec[i - 1] = arr->vec[i];
+  arr->size--;
+
+  return arr->vec[index];
+}
+
+array_iterator array_erase_many (array *arr, array_iterator first,
+                                 array_iterator last,
+                                 void (*destr) (dptr data));
+
+dptr
+array_front (array *arr)
+{
+  if (!arr || arr->size == 0)
+    return NULL;
+  return arr->vec[0];
+}
+
+array_iterator
+array_find (const array *arr, constdptr data,
+            bool (*cmp) (constdptr first, constdptr second))
+{
+  if (!arr)
+    return array_end ();
+
+  for (size_t i = 0; i < arr->size; i++)
+    {
+      if (cmp (arr->vec[i], data))
+        return (arr->vec + i);
+    }
+
+  return array_end ();
+}
+
+array_iterator
+array_find_if (const array *arr, bool (*predicate) (constdptr data))
+{
+  if (!arr)
+    return array_end ();
+
+  for (size_t i = 0; i < arr->size; i++)
+    {
+      if (predicate (arr->vec[i]))
+        return (arr->vec + i);
+    }
+
+  return array_end ();
+}
+
+array_iterator
+array_rfind (const array *arr, constdptr data,
+             bool (*cmp) (constdptr first, constdptr second))
+{
+  if (!arr)
+    return array_end ();
+
+  for (size_t i = arr->size - 1; i < arr->size; i--)
+    {
+      if (cmp (arr->vec[i], data))
+        return (arr->vec + i);
+    }
+
+  return array_rend ();
+}
+
+array_iterator
+array_rfind_if (const array *arr, bool (*predicate) (constdptr data))
+{
+  if (!arr)
+    return array_end ();
+
+  for (size_t i = arr->size - 1; i < arr->size; i--)
+    {
+      if (predicate (arr->vec[i]))
+        return (arr->vec + i);
+    }
+
+  return array_rend ();
+}
+
+array_iterator
+array_insert (array *arr, array_iterator where, dptr data)
+{
+  if (!arr || !where)
+    return array_end ();
+
+  __array_increase_capacity_if_need (arr);
+
+  size_t index = __array_count_index_of_iterator (arr, where);
+
+  for (size_t i = arr->size - 1; i >= index; i++)
+    arr->vec[i + 1] = arr->vec[i];
+
+  arr->vec[index] = data;
+
+  return arr->vec + index;
+}
+
+array_iterator array_insert_many (array *arr, array_iterator where,
+                                  size_t count, ...);
+
+void
+array_pop_back (array *arr, void (*destr) (dptr data))
+{
+  if (!arr || array_empty (arr))
+    return;
+
+  destr (arr->vec[arr->size - 1]);
+  arr->size--;
+}
+
+void
+array_push_back (array *arr, dptr data)
+{
+  if (!arr)
+    return;
+
+  __array_increase_capacity_if_need (arr);
+
+  arr->vec[arr->size] = data;
+  arr->size++;
+}
+
+inline void
+array_reserve (array *arr, size_t count)
+{
+  if (!arr)
+    return;
+  __array_increase_capacity (arr, count);
+}
+
+inline void
+array_shrink_to_fit (array *arr)
+{
+  if (!arr)
+    return;
+  __array_increase_capacity (arr, arr->size);
 }
 
 void array_remove (array *arr, dptr data,
-                  bool (*cmp) (constdptr first, constdptr second),
-                  void (*destr) (dptr data));
+                   bool (*cmp) (constdptr first, constdptr second),
+                   void (*destr) (dptr data));
 
 void array_remove_if (array *arr, bool (*predicate) (constdptr data),
-                     void (*destr) (dptr data));
+                      void (*destr) (dptr data));
 
 void array_reverse (array *arr);
 
 void array_sort (array *arr, int (*cmp) (constdptr first, constdptr second));
 
 void array_unique (array *arr,
-                  bool (*predicate) (constdptr first, constdptr second));
+                   bool (*predicate) (constdptr first, constdptr second));
 
-inline __attribute__ ((always_inline))
-size_t array_size(array *arr)
+inline __attribute__ ((always_inline)) size_t
+array_size (array *arr)
 {
-    return arr->size;
+  if (!arr)
+    return 0;
+  return arr->size;
 }
