@@ -59,8 +59,10 @@ void queue_push (queue *q, constdptr data);
  * @brief Function to pop last element from the queue
  *
  * @param q Queue to pop element.
+ * @param destr Pointer to function, to
+ * free memory of datas correctly.
  */
-void queue_pop (queue *q);
+void queue_pop (queue *q, void (*destr) (dptr data));
 
 /**
  * @brief Function to get front element.
@@ -99,7 +101,9 @@ bool queue_empty (const queue *q);
  * @brief Function to destroy queue. Frees the memory.
  * Not checking that q == nullptr.
  * @param q Pointer of the queue to destroy.
+ * @param destr Pointer to function, to
+ * free memory of datas correctly.
  */
-void queue_destroy (queue *q);
+void queue_destroy (queue *q, void (*destr) (dptr data));
 
 #endif

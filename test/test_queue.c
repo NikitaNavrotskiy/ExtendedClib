@@ -27,24 +27,24 @@ START_TEST (queue_test_1)
   ck_assert (*(int *)queue_front (q) == c);
   ck_assert (*(int *)queue_back (q) == a);
 
-  queue_pop (q);
+  queue_pop (q, NULL);
   ck_assert (queue_size (q) == 2);
   ck_assert (!queue_empty (q));
   ck_assert (*(int *)queue_front (q) == c);
   ck_assert (*(int *)queue_back (q) == b);
 
-  queue_pop (q);
+  queue_pop (q, NULL);
   ck_assert (queue_size (q) == 1);
   ck_assert (!queue_empty (q));
   ck_assert (*(int *)queue_front (q) == c);
   ck_assert (*(int *)queue_back (q) == c);
 
-  queue_pop (q);
+  queue_pop (q, NULL);
   ck_assert (q != NULL);
   ck_assert (queue_empty (q));
   ck_assert (queue_size (q) == 0);
 
-  queue_destroy (q);
+  queue_destroy (q, NULL);
 }
 
 START_TEST (queue_test_2)
@@ -81,7 +81,7 @@ START_TEST (queue_test_2)
   ck_assert ((char *)queue_front (q) == three);
   ck_assert ((char *)queue_back (q) == one);
 
-  queue_pop (q);
+  queue_pop (q, NULL);
   ck_assert (queue_size (q) == 2);
   ck_assert (!queue_empty (q));
   ck_assert_str_eq ((char *)queue_front (q), three);
@@ -89,7 +89,7 @@ START_TEST (queue_test_2)
   ck_assert ((char *)queue_front (q) == three);
   ck_assert ((char *)queue_back (q) == two);
 
-  queue_pop (q);
+  queue_pop (q, NULL);
   ck_assert (queue_size (q) == 1);
   ck_assert (!queue_empty (q));
   ck_assert_str_eq ((char *)queue_front (q), three);
@@ -105,7 +105,7 @@ START_TEST (queue_test_2)
   ck_assert ((char *)queue_front (q) == four);
   ck_assert ((char *)queue_back (q) == three);
 
-  queue_pop (q);
+  queue_pop (q, NULL);
   ck_assert (queue_size (q) == 1);
   ck_assert (!queue_empty (q));
   ck_assert_str_eq ((char *)queue_front (q), four);
@@ -113,7 +113,7 @@ START_TEST (queue_test_2)
   ck_assert ((char *)queue_front (q) == four);
   ck_assert ((char *)queue_back (q) == four);
 
-  queue_pop (q);
+  queue_pop (q, NULL);
   ck_assert (q != NULL);
   ck_assert (queue_empty (q));
   ck_assert (queue_size (q) == 0);
@@ -126,12 +126,12 @@ START_TEST (queue_test_2)
   ck_assert ((char *)queue_front (q) == five);
   ck_assert ((char *)queue_back (q) == five);
 
-  queue_pop (q);
+  queue_pop (q, NULL);
   ck_assert (q != NULL);
   ck_assert (queue_empty (q));
   ck_assert (queue_size (q) == 0);
 
-  queue_destroy (q);
+  queue_destroy (q, NULL);
 }
 
 START_TEST (queue_test_3)
@@ -147,15 +147,15 @@ START_TEST (queue_test_3)
         {
           int r = rand ();
           if (r % 2 == 0 && !queue_empty (q))
-            queue_pop (q);
+            queue_pop (q, NULL);
           else
             queue_push (q, &i);
         }
     }
   while (!queue_empty (q))
-    queue_pop (q);
+    queue_pop (q, NULL);
 
-  queue_destroy (q);
+  queue_destroy (q, NULL);
 
   i = 0;
   j = 0;
@@ -165,13 +165,13 @@ START_TEST (queue_test_3)
         {
           int r = rand ();
           if (r % 2 == 0 && !queue_empty (q1))
-            queue_pop (q1);
+            queue_pop (q1, NULL);
           else
             queue_push (q1, &i);
         }
     }
 
-  queue_destroy (q1);
+  queue_destroy (q1, NULL);
 }
 
 Suite *

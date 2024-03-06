@@ -30,8 +30,7 @@ forward_list_clear (forward_list *l, void (*destr) (dptr data))
   while (tmp)
     {
       struct flnode *tmp_next = tmp->next;
-      destr (tmp->data);
-      __o_node_destroy (tmp);
+      __o_node_destroy (tmp, destr);
       tmp = tmp_next;
     }
 
@@ -150,8 +149,7 @@ forward_list_erase_after (forward_list *l, forward_list_iterator where,
   l->size--;
 
   /* Calling destructor. */
-  destr (tmp->data);
-  __o_node_destroy (tmp);
+  __o_node_destroy (tmp, destr);
 }
 
 inline __attribute__ ((always_inline)) dptr
@@ -248,8 +246,7 @@ forward_list_pop_front (forward_list *l, void (*destr) (dptr data))
   l->front = tmp->next;
   l->size--;
 
-  destr (tmp->data);
-  __o_node_destroy (tmp);
+  __o_node_destroy (tmp, destr);
 }
 
 inline void

@@ -67,8 +67,10 @@ struct do_node *__do_node_create (constdptr data, struct do_node *next,
  * node is nullptr.
  *
  * @param node Node to destroy
+ * @param destr Funciton to destroy data correctly,
+ * Should be NULL, if do not should be freed.
  */
-void __do_node_destroy (struct do_node *node);
+void __do_node_destroy (struct do_node *node, void (*destr) (dptr data));
 
 /**
  * @struct o_node
@@ -115,7 +117,9 @@ struct o_node *__o_node_create (constdptr data, struct o_node *next);
  * node is nullptr.
  *
  * @param node Node to destroy
+ * @param destr Funciton to destroy data correctly,
+ * Should be NULL, if do not should be freed.
  */
-void __o_node_destroy (struct o_node *node);
+void __o_node_destroy (struct o_node *node, void (*destr) (dptr data));
 
 #endif

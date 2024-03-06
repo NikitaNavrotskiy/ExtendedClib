@@ -2,34 +2,38 @@ NAME=extlibc
 
 
 CC=gcc
-CFLAGS=-Werror -Wall -Wextra -O3 -flto -march=native
+CFLAGS=-Werror -Wall -Wextra -O3 -march=native
 
 
-HEADERS=lib/queue.h lib/types.h lib/stack.h lib/list.h  lib/forward_list.h
-SRC=lib/types.c lib/queue.c lib/stack.c lib/list.c lib/forward_list.c
+HEADERS=lib/queue.h lib/types.h lib/stack.h lib/list.h  lib/forward_list.h \
+	lib/linear_allocator.h lib/pool_allocator.h
+SRC=lib/types.c lib/queue.c lib/stack.c lib/list.c lib/forward_list.c \
+	lib/linear_allocator.c lib/pool_allocator.c
 OBJ=$(SRC:.c=.o)
 
 
 TEST_HEADERS=test/test.h
 TEST_SRC=$(SRC) test/test.c test/test_queue.c test/test_stack.c test/test_list.c \
-	test/test_forward_list.c
+	test/test_forward_list.c test/test_linear_allocator.c test/test_pool_allocator.c \
 
 TEST_FLAGS=-lcheck -lm -lsubunit
 TEST_EXEC=$(NAME)_test
 
 
 
+all: clean shared_lib static_lib
 
-static_lib: $(OBJ)
-	ar rcs $(NAME).a $<
+
+static_lib: clean $(OBJ)
+	ar rcs $(NAME).a $(OBJ)
 	
 
-shared_lib: $(OBJ)
-	$(CC) -shared -fpic -o $(NAME).so $(OBJ)
+shared_lib: clean $(OBJ)
+	$(CC) -shared -fpic -flto -o $(NAME).so $(OBJ)
 
 
 %.o: %.c
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) -flto -c $< -o $@
 
 
 tests: clean

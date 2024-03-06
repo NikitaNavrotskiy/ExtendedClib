@@ -43,8 +43,7 @@ list_clear (list *l, void (*destr) (dptr data))
   while (tmp)
     {
       struct lnode *tmp_next = tmp->next;
-      destr (tmp->data);
-      __do_node_destroy (tmp);
+      __do_node_destroy (tmp, destr);
       tmp = tmp_next;
     }
 
@@ -173,8 +172,7 @@ list_erase (list *l, list_iterator where, void (*destr) (dptr data))
     l->front = where->next;
   l->size--;
 
-  destr (tmp->data);
-  __do_node_destroy (tmp);
+  __do_node_destroy (tmp, destr);
 }
 
 void
@@ -342,8 +340,7 @@ list_pop_back (list *l, void (*destr) (dptr data))
     l->front = NULL;
   l->size--;
   /* Deleting old front element. */
-  destr (tmp->data);
-  __do_node_destroy (tmp);
+  __do_node_destroy (tmp, destr);
 }
 
 void
@@ -367,8 +364,7 @@ list_pop_front (list *l, void (*destr) (dptr data))
     l->back = NULL;
   l->size--;
   /* Deleting old front element. */
-  destr (tmp->data);
-  __do_node_destroy (tmp);
+  __do_node_destroy (tmp, destr);
 }
 
 void

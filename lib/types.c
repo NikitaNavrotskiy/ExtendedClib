@@ -23,8 +23,10 @@ __do_node_create (constdptr data, struct do_node *next, struct do_node *prev)
 }
 
 inline __attribute__ ((always_inline)) void
-__do_node_destroy (struct do_node *node)
+__do_node_destroy (struct do_node *node, void (*destr) (dptr data))
 {
+  if (destr)
+    destr (node->data);
   free (node);
 }
 
@@ -52,8 +54,10 @@ __o_node_create (constdptr data, struct o_node *next)
 }
 
 inline __attribute__ ((always_inline)) void
-__o_node_destroy (struct o_node *node)
+__o_node_destroy (struct o_node *node, void (*destr) (dptr data))
 {
+  if (destr)
+    destr (node->data);
   free (node);
 }
 

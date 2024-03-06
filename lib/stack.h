@@ -56,8 +56,10 @@ void stack_push (stack *s, constdptr data);
  * @brief Function to pop top element from the stack.
  * Do not check if stack is empty.
  * @param s Stack to pop element.
+ * @param destr  Pointer to function, to
+ * free memory of datas correctly.
  */
-void stack_pop (stack *s);
+void stack_pop (stack *s, void (*destr) (dptr data));
 
 /**
  * @brief Function to get top element from the Stack.
@@ -88,7 +90,9 @@ bool stack_empty (const stack *s);
  * @brief Function to destroy stack. Frees the memory.
  * Not checking that s == nullptr.
  * @param s Pointer of the stack to destroy.
+ * @param destr Pointer to function, to
+ * free memory of datas correctly.
  */
-void stack_destroy (stack *s);
+void stack_destroy (stack *s, void (*destr) (dptr data));
 
 #endif

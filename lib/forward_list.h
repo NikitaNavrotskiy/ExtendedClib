@@ -9,7 +9,6 @@
 #include <stdbool.h> // bool
 #include <stddef.h>  // size_t
 #include <stdlib.h>  // malloc, free
-#include <string.h>  // mem* funcs
 
 #include "types.h"
 

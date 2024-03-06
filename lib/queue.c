@@ -32,7 +32,7 @@ queue_push (queue *q, constdptr data)
 }
 
 void
-queue_pop (queue *q)
+queue_pop (queue *q, void (*destr) (dptr data))
 {
   /* Saving back to free it, but not lose back's references */
   struct qnode *tmp = q->back;
@@ -48,7 +48,7 @@ queue_pop (queue *q)
     q->front = NULL;
   q->size--;
 
-  __do_node_destroy (tmp);
+  __do_node_destroy (tmp, destr);
 }
 
 inline __attribute__ ((always_inline)) dptr
@@ -76,7 +76,7 @@ queue_empty (const queue *q)
 }
 
 void
-queue_destroy (queue *q)
+queue_destroy (queue *q, void (*destr) (dptr data))
 {
   struct qnode *tmp = q->front;
 
@@ -85,7 +85,7 @@ queue_destroy (queue *q)
   while (tmp)
     {
       struct qnode *tmp_next = tmp->next;
-      __do_node_destroy (tmp);
+      __do_node_destroy (tmp, destr);
       tmp = tmp_next;
     }
 

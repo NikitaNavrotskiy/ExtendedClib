@@ -9,14 +9,13 @@
 #include <stdbool.h> // bool
 #include <stddef.h>  // size_t
 #include <stdlib.h>  // malloc, free
-#include <string.h>  // mem* funcs
 
 #include "types.h"
 
 #define lnode do_node
 
 /**
- * @brief Alias for do_node pointer
+ * @brief Alias for do_node pointer.
  */
 typedef struct lnode *list_iterator;
 
