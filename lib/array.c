@@ -104,9 +104,11 @@ array_clear (array *arr, void (*destr) (dptr data))
   if (!arr)
     return;
 
-  for (size_t i = 0; i < arr->size; i++)
-    destr (arr->vec[i]);
-
+  if(destr)
+  {
+    for (size_t i = 0; i < arr->size; i++)
+      destr (arr->vec[i]);
+  }
   arr->size = 0;
 }
 
@@ -228,7 +230,8 @@ array_erase (array *arr, array_iterator where, void (*destr) (dptr data))
   dptr tmp = *where;
   size_t index = __array_count_index_of_iterator (arr, where);
 
-  destr (tmp);
+  if(destr)
+    destr (tmp);
 
   if (index == arr->size - 1)
     {
@@ -353,8 +356,8 @@ array_pop_back (array *arr, void (*destr) (dptr data))
 {
   if (!arr || array_empty (arr))
     return;
-
-  destr (arr->vec[arr->size - 1]);
+  if(destr)
+    destr (arr->vec[arr->size - 1]);
   arr->size--;
 }
 

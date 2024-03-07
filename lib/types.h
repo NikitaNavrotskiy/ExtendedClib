@@ -122,13 +122,12 @@ struct o_node *__o_node_create (constdptr data, struct o_node *next);
  */
 void __o_node_destroy (struct o_node *node, void (*destr) (dptr data));
 
-
 /**
  * @struct pair
  * @brief Implements pair-node that contains to values.
  */
 struct pair
-{ 
+{
   /**
    * @brief Implements first value (Key for Hashmap).
    */
@@ -157,10 +156,18 @@ struct pair *pair_create (constdptr key, constdptr val);
  * @brief Function to destroy pair. Not checking if
  * node is nullptr.
  *
- * @param node Node to destroy
+ * @param pair struct pair to destroy
  * @param destr Funciton to destroy pair correctly,
  * Should be NULL, if do not should be freed.
  */
 void pair_destroy (struct pair *pair, void (*destr) (struct pair *pair));
+
+/**
+ * @brief Default pair destructor. Not checking if
+ * node is nullptr. Just free(pair).
+ *
+ * @param pair struct pair to destroy.
+ */
+void pair_destroy_default (dptr pair);
 
 #endif

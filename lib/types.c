@@ -69,9 +69,10 @@ o_node_get (const struct o_node *nd)
  * @brief Implementation of pair functions.
  */
 
-struct pair *pair_create (constdptr key, constdptr val)
+struct pair *
+pair_create (constdptr key, constdptr val)
 {
-  struct pair * pr = (struct pair *)malloc(sizeof(struct pair));
+  struct pair *pr = (struct pair *)malloc (sizeof (struct pair));
 
   pr->key = (dptr)key;
   pr->value = (dptr)val;
@@ -79,10 +80,17 @@ struct pair *pair_create (constdptr key, constdptr val)
   return pr;
 }
 
-
-void pair_destroy (struct pair *pair, void (*destr) (struct pair *pair))
+inline void
+pair_destroy (struct pair *pair, void (*destr) (struct pair *pair))
 {
-  if(destr)
-      destr(pair);
-  free(pair);
+  if (destr)
+    destr (pair);
+  free (pair);
+}
+
+
+inline void
+pair_destroy_default (dptr pair)
+{
+  free (pair);
 }
