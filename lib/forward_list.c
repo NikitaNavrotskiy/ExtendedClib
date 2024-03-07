@@ -1,7 +1,3 @@
-/**
- * @file Implementation of list's API functions.
- */
-
 #include "forward_list.h"
 
 forward_list *

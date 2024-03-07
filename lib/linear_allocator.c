@@ -1,7 +1,3 @@
-/**
- * @file Implementation of linear allocator's API functions.
- */
-
 #include "linear_allocator.h"
 
 linear_allocator *

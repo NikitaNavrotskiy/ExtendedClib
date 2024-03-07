@@ -1,7 +1,3 @@
-/**
- * @file types.c Implementation of types functions.
- */
-
 #include "types.h"
 
 #include <stdlib.h>
@@ -67,4 +63,26 @@ o_node_get (const struct o_node *nd)
   if (nd)
     return nd->data;
   return NULL;
+}
+
+/**
+ * @brief Implementation of pair functions.
+ */
+
+struct pair *pair_create (constdptr key, constdptr val)
+{
+  struct pair * pr = (struct pair *)malloc(sizeof(struct pair));
+
+  pr->key = (dptr)key;
+  pr->value = (dptr)val;
+
+  return pr;
+}
+
+
+void pair_destroy (struct pair *pair, void (*destr) (struct pair *pair))
+{
+  if(destr)
+      destr(pair);
+  free(pair);
 }

@@ -1,7 +1,3 @@
-/**
- * @file Implementation of list's API functions.
- */
-
 #include "list.h"
 
 list *

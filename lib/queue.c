@@ -1,7 +1,3 @@
-/**
- * @file Implementation of queue's API functions.
- */
-
 #include "queue.h"
 
 queue *

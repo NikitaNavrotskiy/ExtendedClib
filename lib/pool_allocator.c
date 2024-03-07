@@ -1,7 +1,3 @@
-/**
- * @file Implementation of pool allocator's API functions.
- */
-
 #include "pool_allocator.h"
 
 pool_allocator *

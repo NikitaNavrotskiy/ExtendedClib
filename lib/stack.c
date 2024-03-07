@@ -1,7 +1,3 @@
-/**
- * @file Implementation of stack's API functions.
- */
-
 #include "stack.h"
 
 stack *

@@ -1,7 +1,3 @@
-/**
- * @file array.c Implementation of public array's API functions.
- */
-
 #include "array.h"
 
 /**

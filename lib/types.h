@@ -108,7 +108,7 @@ dptr o_node_get (const struct o_node *nd);
  *
  * @param data Pointer to data.
  * @param next Pointer to the next node.
- * @return  struct qnode* New created qnone.
+ * @return  struct o_node* New created o_none.
  */
 struct o_node *__o_node_create (constdptr data, struct o_node *next);
 
@@ -121,5 +121,46 @@ struct o_node *__o_node_create (constdptr data, struct o_node *next);
  * Should be NULL, if do not should be freed.
  */
 void __o_node_destroy (struct o_node *node, void (*destr) (dptr data));
+
+
+/**
+ * @struct pair
+ * @brief Implements pair-node that contains to values.
+ */
+struct pair
+{ 
+  /**
+   * @brief Implements first value (Key for Hashmap).
+   */
+  dptr key;
+
+  /**
+   * @brief Implements second value (Value for Hashmap).
+   */
+  dptr value;
+};
+
+/**
+ * @brief Api to work with pair.
+ */
+
+/**
+ * @brief Function to initialize pair.
+ *
+ * @param key First value (key).
+ * @param value Second value (Value).
+ * @return  struct pair * New created pair.
+ */
+struct pair *pair_create (constdptr key, constdptr val);
+
+/**
+ * @brief Function to destroy pair. Not checking if
+ * node is nullptr.
+ *
+ * @param node Node to destroy
+ * @param destr Funciton to destroy pair correctly,
+ * Should be NULL, if do not should be freed.
+ */
+void pair_destroy (struct pair *pair, void (*destr) (struct pair *pair));
 
 #endif

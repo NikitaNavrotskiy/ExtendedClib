@@ -1,12 +1,7 @@
-/**
- * @file hash.c Implementation of hash algorithm
- * for Hashset and Hashmap.
- */
-
 #include "hash.h"
 
 
-hash32 hash(void *key, size_t len)
+hash32 hash(constdptr key, size_t len)
 {
     hash32 hash = 0;
 
