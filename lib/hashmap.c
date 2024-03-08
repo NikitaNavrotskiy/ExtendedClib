@@ -4,11 +4,10 @@
     Private function of hashmap.
 */
 
-
 /**
  * @brief Function to calculate index
  * in buckets array by key.
- * 
+ *
  * @param hm Pointer to hashmap instance.
  * @param key Key to calculate index.
  * @param keysize Size of key.
@@ -22,7 +21,7 @@ __hashmap_index_from_key (const hashmap *hm, constdptr key, size_t keysize)
 
 /**
  * @brief Function to get bucket by index.
- * 
+ *
  * @param hm Pointer to hashmap instance.
  * @param index Index to get bucket.
  * @return forward_list* Forward list of bucket.
@@ -36,7 +35,7 @@ __hashmap_bucket_by_index (const hashmap *hm, hash32 index)
 /**
  * @brief Function to get pair of elements
  * by key.
- * 
+ *
  * @param hm Pointer to hashmap instance.
  * @param key Key to calculate index.
  * @param keysize Size of key.
@@ -61,10 +60,9 @@ __hashmap_pair_by_key (const hashmap *hm, constdptr key, size_t keysize)
   return NULL;
 }
 
-
 /**
  * @brief Function of resizing array of buckets.
- * 
+ *
  * @param hm Pointer to hashmap instance.
  * @param size New size.
  */

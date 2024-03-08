@@ -124,19 +124,19 @@ START_TEST (hashmap_test_3)
 
 START_TEST (hashmap_test_4)
 {
-  int arr[1000000] = {0};
+  int arr[1000000] = { 0 };
   int i;
   hashmap *hm = hashmap_create (cmp_int, size_func, NULL);
-  for(i = 0; i < 100000; i++)
-  {
-    arr[i] = i;
-    hashmap_insert(hm, &i, arr + i);
-  }
+  for (i = 0; i < 100000; i++)
+    {
+      arr[i] = i;
+      hashmap_insert (hm, &i, arr + i);
+    }
 
-  for(int i = 0; i < 100000; i++)
-  {
-    hashmap_erase(hm, arr + i);
-  }
+  for (int i = 0; i < 100000; i++)
+    {
+      hashmap_erase (hm, arr + i);
+    }
 
   hashmap_destroy (hm);
 }

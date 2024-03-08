@@ -5,14 +5,13 @@
 #include <stdlib.h>
 #include <time.h>
 
-
 #include "../lib/array.h"
 #include "../lib/forward_list.h"
+#include "../lib/hashmap.h"
+#include "../lib/hashset.h"
 #include "../lib/list.h"
 #include "../lib/queue.h"
 #include "../lib/stack.h"
-#include "../lib/hashmap.h"
-#include "../lib/hashset.h"
 
 #include "../lib/linear_allocator.h"
 #include "../lib/pool_allocator.h"

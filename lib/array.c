@@ -78,7 +78,7 @@ array_create (size_t capacity)
   // Setting starting values.
   arr->size = 0;
   arr->capacity = (capacity == 0) ? ARRAY_CAPACITY_DEFAULT : capacity;
-  
+
   // Allocating memory for array.
   arr->vec = (dptr *)malloc (sizeof (dptr) * arr->capacity);
 
@@ -194,7 +194,7 @@ array_count (const array *arr, constdptr data,
 size_t
 array_count_if (const array *arr, bool (*predicate) (constdptr data))
 {
-    // Checking if arr is not NULL.
+  // Checking if arr is not NULL.
   if (!arr)
     return 0;
 
@@ -275,7 +275,7 @@ array_erase (array *arr, array_iterator where, void (*destr) (dptr data))
   if (!arr || !where)
     return array_end ();
 
-// Checking for appropriate iterator.
+  // Checking for appropriate iterator.
   if (!__array_is_iterator_from_range (arr, where))
     return array_end ();
 
@@ -310,8 +310,8 @@ array_iterator array_erase_many (array *arr, array_iterator first,
 dptr
 array_front (array *arr)
 {
-    // Checking if arr is not NULL and 
-    // array is not empty.
+  // Checking if arr is not NULL and
+  // array is not empty.
   if (!arr || arr->size == 0)
     return NULL;
   return arr->vec[0];
@@ -321,7 +321,7 @@ array_iterator
 array_find (const array *arr, constdptr data,
             bool (*cmp) (constdptr first, constdptr second))
 {
-// Checking if arr is not NULL
+  // Checking if arr is not NULL
   if (!arr)
     return array_end ();
 
@@ -339,7 +339,7 @@ array_find (const array *arr, constdptr data,
 array_iterator
 array_find_if (const array *arr, bool (*predicate) (constdptr data))
 {
-// Checking if arr is not NULL
+  // Checking if arr is not NULL
   if (!arr)
     return array_end ();
 
@@ -358,7 +358,7 @@ array_iterator
 array_rfind (const array *arr, constdptr data,
              bool (*cmp) (constdptr first, constdptr second))
 {
-// Checking if arr is not NULL
+  // Checking if arr is not NULL
   if (!arr)
     return array_end ();
 

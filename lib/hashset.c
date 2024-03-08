@@ -4,11 +4,10 @@
     Private function of hashset.
 */
 
-
 /**
  * @brief Function to calculate index
  * in buckets array by value.
- * 
+ *
  * @param hs Pointer to hashset instance.
  * @param val element to calculate index.
  * @param valsize Size of element.
@@ -22,7 +21,7 @@ __hashset_index_from_val (const hashset *hs, constdptr val, size_t valsize)
 
 /**
  * @brief Function to get bucket by index.
- * 
+ *
  * @param hs Pointer to hashset instance.
  * @param index Index to get bucket.
  * @return forward_list* Forward list of bucket.
@@ -35,7 +34,7 @@ __hashset_bucket_by_index (const hashset *hs, hash32 index)
 
 /**
  * @brief Function to get value.
- * 
+ *
  * @param hs Pointer to hashmap instance.
  * @param val Val to get.
  * @param valsize Size of val.
@@ -59,10 +58,9 @@ __hashmap_get_value (const hashset *hs, constdptr val, size_t valsize)
   return NULL;
 }
 
-
 /**
  * @brief Function of resizing array of buckets.
- * 
+ *
  * @param hs Pointer to hashset instance.
  * @param size New size.
  */
@@ -128,7 +126,6 @@ hashset_create (bool (*cmp) (constdptr val1, constdptr val2),
 
   // Setting destructor provided by user.
   hs->destr = destr;
-
 
   return hs;
 }

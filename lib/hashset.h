@@ -48,7 +48,7 @@ typedef struct hashset
   size_t (*size_func) (constdptr);
 
   /**
-   * @brief Destructor for elements. 
+   * @brief Destructor for elements.
    * Null if shouldnot be freed.
    */
   void (*destr) (dptr);
@@ -71,10 +71,9 @@ typedef struct hashset
  * Null if should not be freed.
  * @return Pointer to new hashset.
  */
-hashset *hashset_create (bool (*pair_vals_cmp) (constdptr val1,
-                                                constdptr val2),
-                         size_t (*size_func) (constdptr val),
-                         void (*destr) (dptr val));
+hashset *
+hashset_create (bool (*pair_vals_cmp) (constdptr val1, constdptr val2),
+                size_t (*size_func) (constdptr val), void (*destr) (dptr val));
 
 /**
  * @brief Function to get number of bucket for

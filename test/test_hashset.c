@@ -7,7 +7,6 @@ destr (dptr data)
   return;
 }
 
-
 static size_t
 size_func (constdptr val)
 {
@@ -19,7 +18,6 @@ cmp_int (constdptr f, constdptr s)
 {
   return (*(int *)f == *(int *)s);
 }
-
 
 START_TEST (hashset_test_1)
 {
@@ -114,23 +112,22 @@ START_TEST (hashset_test_3)
 
 START_TEST (hashset_test_4)
 {
-  int arr[1000000] = {0};
+  int arr[1000000] = { 0 };
   int i;
   hashset *hs = hashset_create (cmp_int, size_func, NULL);
-  for(i = 0; i < 100000; i++)
-  {
-    arr[i] = i;
-    hashset_insert(hs, arr + i);
-  }
+  for (i = 0; i < 100000; i++)
+    {
+      arr[i] = i;
+      hashset_insert (hs, arr + i);
+    }
 
-  for(int i = 0; i < 100000; i++)
-  {
-    hashset_erase(hs, arr + i);
-  }
+  for (int i = 0; i < 100000; i++)
+    {
+      hashset_erase (hs, arr + i);
+    }
 
   hashset_destroy (hs);
 }
-
 
 Suite *
 suite_hashset ()
