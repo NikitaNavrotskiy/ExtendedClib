@@ -16,7 +16,7 @@ OBJ=$(SRC:.c=.o)
 
 TEST_HEADERS=test/test.h
 TEST_SRC=$(SRC) test/test.c test/test_queue.c test/test_stack.c test/test_list.c \
-	test/test_forward_list.c test/test_array.c test/test_hashmap.c \
+	test/test_forward_list.c test/test_array.c test/test_hashmap.c test/test_hashset.c \
 	test/test_linear_allocator.c test/test_pool_allocator.c 
 
 TEST_FLAGS=-lcheck -lm -lsubunit

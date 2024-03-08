@@ -13,13 +13,13 @@ pair_destr (struct pair *pair)
   pair = pair;
 }
 
-size_t
+static size_t
 size_func (constdptr key)
 {
   return sizeof (*(int *)key);
 }
 
-bool
+static bool
 cmp_int (constdptr f, constdptr s)
 {
   return (*(int *)((struct pair *)f)->key == *(int *)((struct pair *)s)->key);

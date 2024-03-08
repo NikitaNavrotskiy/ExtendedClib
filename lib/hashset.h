@@ -1,10 +1,10 @@
 /**
- * @file hashmap.h Implementation of Hashmap
- * (unordered_map in STL) data structure.
+ * @file hashset.h Implementation of Hashset
+ * (unordered_set in STL) data structure.
  */
 
-#ifndef _EXTENDED_C_LIB_LIB_HASHMAP_H
-#define _EXTENDED_C_LIB_LIB_HASHMAP_H
+#ifndef _EXTENDED_C_LIB_LIB_HASHSET_H
+#define _EXTENDED_C_LIB_LIB_HASHSET_H
 
 #include <stdbool.h> // bool
 #include <stdlib.h>  //malloc, free
@@ -21,7 +21,7 @@
  * @struct hashset.
  * @brief Implementation of Hashset data structure.
  */
-typedef struct hashmap
+typedef struct hashset
 {
   /**
    * @brief Counting current number of elements.
@@ -48,7 +48,8 @@ typedef struct hashmap
   size_t (*size_func) (constdptr);
 
   /**
-   * @brief Destructor for elements.
+   * @brief Destructor for elements. 
+   * Null if shouldnot be freed.
    */
   void (*destr) (dptr);
 } hashset;
@@ -67,6 +68,7 @@ typedef struct hashmap
  * @param size_func Function to compute
  * size of the Val.
  * @param destr Destructor for elements.
+ * Null if should not be freed.
  * @return Pointer to new hashset.
  */
 hashset *hashset_create (bool (*pair_vals_cmp) (constdptr val1,

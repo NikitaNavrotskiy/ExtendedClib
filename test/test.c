@@ -18,6 +18,7 @@ run_tests ()
                     suite_forward_list (),
                     suite_array (),
                     suite_hashmap (),
+                    suite_hashset (),
                     suite_linear_allocator (),
                     suite_pool_allocator (),
                     NULL };

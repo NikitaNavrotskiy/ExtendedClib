@@ -7,7 +7,7 @@
 
 /**
  * @brief Function to calculate index
- * in buckets array by key.
+ * in buckets array by value.
  * 
  * @param hs Pointer to hashset instance.
  * @param val element to calculate index.
@@ -101,14 +101,14 @@ __hashset_resize_buckets_array (hashset *hs, size_t size)
 }
 
 /*
-    Public functions of hashmap's API.
+    Public functions of hashset's API.
 */
 
 hashset *
 hashset_create (bool (*cmp) (constdptr val1, constdptr val2),
                 size_t (*size_func) (constdptr val), void (*destr) (dptr val))
 {
-  // Allocation memory for the hashmap instance.
+  // Allocation memory for the hashset instance.
   hashset *hs = (hashset *)malloc (sizeof (hashset));
 
   // Creating array of buckets..
@@ -120,17 +120,15 @@ hashset_create (bool (*cmp) (constdptr val1, constdptr val2),
 
   hs->size = 0;
 
-  // Setting compare func for keys.
+  // Setting compare func for vals.
   hs->cmp = cmp;
 
-  // Setting sizeof-func for keys.
+  // Setting sizeof-func for vals.
   hs->size_func = size_func;
 
-  // Setting destructor for the pair, provided by user.
-  if (destr)
-    hs->destr = destr;
-  else
-    hs->destr = pair_destroy_default;
+  // Setting destructor provided by user.
+  hs->destr = destr;
+
 
   return hs;
 }
@@ -185,7 +183,7 @@ hashset_erase (hashset *hs, constdptr val)
   // Getting appropriate bucket.
   forward_list *bucket = __hashset_bucket_by_index (hs, index);
 
-  // Removing element by key.
+  // Removing element by val.
   forward_list_remove (bucket, (dptr)val, hs->cmp, hs->destr);
   hs->size--;
 }
@@ -239,6 +237,6 @@ hashset_destroy (hashset *hs)
   // Destroying Destroying Array of buckets.
   array_destroy (hs->buckets, NULL);
 
-  // Destroying hashtable instance.
+  // Destroying hashset instance.
   free (hs);
 }
