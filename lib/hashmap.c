@@ -35,12 +35,44 @@ __hashmap_pair_by_key (const hashmap *hm, constdptr key, size_t keysize)
   return NULL;
 }
 
+
+static void __hashmap_resize_buckets_array(hashmap *hm, size_t size)
+{
+  // Saving old buckets.
+  array *old_buckets = hm->buckets;
+
+  // Creating new buckets.
+  hm->size = size;
+  hm->buckets = array_create(hm->size);
+
+  // Creating every bucket.
+  for (size_t i = 0; i < size; i++)
+    array_push_back (hm->buckets, (dptr *)forward_list_create ());
+
+  // Inserting every element from old buckets to new buckets.
+  for (size_t i = 0; i < array_size(old_buckets); i++)
+  {
+    forward_list_iterator cur = forward_list_begin((forward_list *)(old_buckets + i));
+
+    while(cur)
+    {
+      struct pair *cur_pair = (struct pair *)(cur->data);
+      hashmap_insert(hm, cur_pair->key, cur_pair->value);
+      cur = cur->next;
+    }
+
+    forward_list_destroy (array_at (hm->buckets, i), hm->destr);
+  }
+
+  array_destroy(old_buckets, hm->destr);
+}
+
 /*
     Public functions of hashmap's API.
 */
 
-hashmap *
-hashmap_create (bool (*cmp) (constdptr pair1, constdptr pair2))
+hashmap *hashmap_create (bool (*cmp) (constdptr pair1,
+                                                constdptr pair2), size_t (*size_func)(constdptr key), void (*destr) (dptr pair))
 {
   // Allocation memory for the hashmap instance.
   hashmap *hm = (hashmap *)malloc (sizeof (hashmap));
@@ -53,16 +85,27 @@ hashmap_create (bool (*cmp) (constdptr pair1, constdptr pair2))
     array_push_back (hm->buckets, (dptr *)forward_list_create ());
 
   hm->size = 0;
+
+  // Setting compare func for keys.
   hm->cmp = cmp;
+
+  // Setting sizeof-func for keys.
+  hm->size_func = size_func;
+
+  // Setting destructor for the pair, provided by user.
+  if(destr)
+    hm->destr = destr;
+  else
+    hm->destr = pair_destroy_default;
 
   return hm;
 }
 
 dptr
-hashmap_at (const hashmap *hm, constdptr key, size_t keysize)
+hashmap_at (const hashmap *hm, constdptr key)
 {
   // Getting pair by key.
-  struct pair *pair = __hashmap_pair_by_key (hm, key, keysize);
+  struct pair *pair = __hashmap_pair_by_key (hm, key, hm->size_func(key));
 
   // If pair exist, returning its value.
   if (pair)
@@ -73,9 +116,9 @@ hashmap_at (const hashmap *hm, constdptr key, size_t keysize)
 }
 
 inline size_t
-hashmap_bucket (const hashmap *hm, constdptr key, size_t keysize)
+hashmap_bucket (const hashmap *hm, constdptr key)
 {
-  return (size_t)__hashmap_index_from_key (hm, key, keysize);
+  return (size_t)__hashmap_index_from_key (hm, key, hm->size_func(key));
 }
 
 inline size_t
@@ -91,24 +134,20 @@ hashmap_bucket_size (const hashmap *hm, size_t nbucket)
 }
 
 void
-hashmap_clear (hashmap *hm, void (*destr) (dptr pair))
+hashmap_clear (hashmap *hm)
 {
-  // Setting default destructor if destr == NULL
-  if(!destr)
-    destr = pair_destroy_default;
-
   // Calling clear func for every bucket.
   for (size_t i = 0; i < array_size (hm->buckets); i++)
-    forward_list_clear (array_at (hm->buckets, i), destr);
+    forward_list_clear (array_at (hm->buckets, i), hm->destr);
 
   // Setting size = 0
   hm->size = 0;
 }
 
 inline bool
-hashmap_contains (const hashmap *hm, constdptr key, size_t keysize)
+hashmap_contains (const hashmap *hm, constdptr key)
 {
-  return __hashmap_pair_by_key (hm, key, keysize) != NULL;
+  return __hashmap_pair_by_key (hm, key, hm->size_func(key)) != NULL;
 }
 
 inline __attribute__ ((always_inline)) bool
@@ -118,19 +157,10 @@ hashmap_empty (const hashmap *hm)
 }
 
 void
-hashmap_erase (hashmap *hm, constdptr key, size_t keysize,
-               void (*destr) (dptr pair))
+hashmap_erase (hashmap *hm, constdptr key)
 {
-  // Checking if key is exist
-  if(!hashmap_contains(hm, key, keysize))
-    return;
-
-  // Setting default destructor if destr == NULL
-  if(!destr)
-    destr = pair_destroy_default;
-
   // Calculating index of bucket by hash.
-  hash32 index = __hashmap_index_from_key (hm, key, keysize);
+  hash32 index = __hashmap_index_from_key (hm, key, hm->size_func(key));
 
   // Getting appropriate bucket.
   forward_list *bucket = __hashmap_bucket_by_index (hm, index);
@@ -139,25 +169,41 @@ hashmap_erase (hashmap *hm, constdptr key, size_t keysize,
   struct pair pattern = { (dptr)key, NULL };
 
   // Removing element by key.
-  forward_list_remove (bucket, &pattern, hm->cmp, destr);
+  forward_list_remove (bucket, &pattern, hm->cmp, hm->destr);
   hm->size--;
 }
 
 void
-hashmap_insert (hashmap *hm, constdptr key, size_t keysize, constdptr val)
+hashmap_insert (hashmap *hm, constdptr key, constdptr val)
 {
+  // Checking if we need to increase array buckets's size. 
+  if(hashmap_bucket_count(hm) == hm->size)
+    __hashmap_resize_buckets_array(hm, hm->size * HASHMAP_INCREASE_BUCKETS_FACTOR);
+
+
   // Calculating index of bucket by hash.
-  hash32 index = __hashmap_index_from_key (hm, key, keysize);
+  hash32 index = __hashmap_index_from_key (hm, key, hm->size_func(key));
 
   // Getting appropriate bucket.
   forward_list *bucket = __hashmap_bucket_by_index (hm, index);
 
-  // Creating new pair from <key> and <val>
-  struct pair *pair = pair_create (key, val);
+  // Creating pattern to find
+  struct pair pattern = {(dptr)key, NULL};
+  
+  // Checking for existance.
+  forward_list_iterator former = forward_list_find(bucket, &pattern, hm->cmp);
 
-  // Inserting new pair to the bucket.
-  forward_list_push_front (bucket, (constdptr)pair);
-  hm->size++;
+  // If not exist => Inserting new pair to the bucket.
+  if(former == forward_list_end())
+  {
+    // Creating new pair from <key> and <val>
+    struct pair *pair = pair_create (key, val);
+    forward_list_push_front (bucket, (constdptr)pair);
+    hm->size++;
+    return;
+  }
+  // Else, updating value
+  ((struct pair *)(former->data))->value = (dptr)val;
 }
 
 inline float
@@ -175,15 +221,11 @@ hashmap_size (const hashmap *hm)
 }
 
 void
-hashmap_destroy (hashmap *hm, void (*destr) (dptr pair))
+hashmap_destroy (hashmap *hm)
 {
-  // Setting default destructor if destr == NULL
-  if(!destr)
-    destr = pair_destroy_default;
-
   // Destoying buckets.
   for (size_t i = 0; i < array_size (hm->buckets); i++)
-    forward_list_destroy (array_at (hm->buckets, i), destr);
+    forward_list_destroy (array_at (hm->buckets, i), hm->destr);
 
   // Destroying Destroying Array of buckets.
   array_destroy (hm->buckets, NULL);

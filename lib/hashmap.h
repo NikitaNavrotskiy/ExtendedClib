@@ -41,6 +41,17 @@ typedef struct hashmap
    * Return false if key1 != key2.
    */
   bool (*cmp) (constdptr, constdptr);
+
+  /**
+   * @brief Function to get to know size
+   * of the key. Needs for hash alg.
+   */
+  size_t (*size_func)(constdptr);
+
+  /**
+   * @brief Destructor for pairs.
+   */
+  void (*destr) (dptr);
 } hashmap;
 
 /**
@@ -55,10 +66,12 @@ typedef struct hashmap
  * the pair.
  * Return true if key1 == key2.
  * Return false if key1 != key2.
+ * @param size_func Function to compute
+ * size of the key.
  * @return Pointer to new hashmap.
  */
 hashmap *hashmap_create (bool (*pair_keys_cmp) (constdptr pair1,
-                                                constdptr pair2));
+                                                constdptr pair2), size_t (*size_func)(constdptr key), void (*destr) (dptr pair));
 
 /**
  * @brief Function to get value by key from the
@@ -66,10 +79,9 @@ hashmap *hashmap_create (bool (*pair_keys_cmp) (constdptr pair1,
  *
  * @param hm Pointer to the instance of hashmap.
  * @param key Key for searching.
- * @param keysize Size of the key.
  * @return dptr
  */
-dptr hashmap_at (const hashmap *hm, constdptr key, size_t keysize);
+dptr hashmap_at (const hashmap *hm, constdptr key);
 
 /**
  * @brief Function to get number of bucket for
@@ -79,13 +91,12 @@ dptr hashmap_at (const hashmap *hm, constdptr key, size_t keysize);
  * @param key Key for searching.
  * @return size_t
  */
-size_t hashmap_bucket (const hashmap *hm, constdptr key, size_t keysize);
+size_t hashmap_bucket (const hashmap *hm, constdptr key);
 
 /**
  * @brief Function to get number of buckets in hashtable.
  *
  * @param hm Pointer to the instance of hashmap.
- * @param keysize Size of the key.
  * @return size_t Number of buckets in hashtable.
  */
 size_t hashmap_bucket_count (const hashmap *hm);
@@ -106,10 +117,8 @@ size_t hashmap_bucket_size (const hashmap *hm, size_t nbucket);
  * Do not destroy instance of hashtable.
  *
  * @param hm Pointer to the instance of hashmap.
- * @param destr Function to destroy pair,
- * NULL, if should not be freed.
  */
-void hashmap_clear (hashmap *hm, void (*destr) (dptr pair));
+void hashmap_clear (hashmap *hm);
 
 /**
  * @brief Function to check if key is in
@@ -117,11 +126,10 @@ void hashmap_clear (hashmap *hm, void (*destr) (dptr pair));
  *
  * @param hm Pointer to the instance of hashmap.
  * @param key Key to check on existense.
- * @param keysize Size of the key.
- * @return true If key is in hashmap.
- * @return false If key is not in hashmap.
+ * @return true If key is in hashmap,
+ *  false If key is not in hashmap.
  */
-bool hashmap_contains (const hashmap *hm, constdptr key, size_t keysize);
+bool hashmap_contains (const hashmap *hm, constdptr key);
 
 /**
  * @brief Function to check if hashmap is empty.
@@ -138,24 +146,18 @@ bool hashmap_empty (const hashmap *hm);
  *
  * @param hm Pointer to the instance of hashmap.
  * @param key Key to find element to erase.
- * @param keysize Size of the key.
- * @param destr Function to destroy pair,
- * NULL, if should not be freed.
  */
-void hashmap_erase (hashmap *hm, constdptr key, size_t keysize,
-                    void (*destr) (dptr pair));
+void hashmap_erase (hashmap *hm, constdptr key);
 
 /**
  * @brief Function to insert new pair of key, val into
- * the hashmap.
+ * the hashmap, or update existing pair.
  *
  * @param hm Pointer to the instance of hashmap.
  * @param key Key of the pair to insert.
- * @param keysize Size of the key.
  * @param val Val of the pair to insert.
  */
-void hashmap_insert (hashmap *hm, constdptr key, size_t keysize,
-                     constdptr val);
+void hashmap_insert (hashmap *hm, constdptr key, constdptr val);
 
 /**
  * @brief Function to get load of hashmap.
@@ -185,9 +187,7 @@ size_t hashmap_size (const hashmap *hm);
  * @brief Destructor for hashmap.
  *
  * @param hm Pointer to the instance of hashmap.
- * @param destr Function to destroy pair's key and value,
- * NULL, if should not be freed.
  */
-void hashmap_destroy (hashmap *hm, void (*destr) (dptr pair));
+void hashmap_destroy (hashmap *hm);
 
 #endif
