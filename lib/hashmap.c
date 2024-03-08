@@ -4,18 +4,44 @@
     Private function of hashmap.
 */
 
-static hash32
+
+/**
+ * @brief Function to calculate index
+ * in buckets array by key.
+ * 
+ * @param hm Pointer to hashmap instance.
+ * @param key Key to calculate index.
+ * @param keysize Size of key.
+ * @return hash32 Index for the key.
+ */
+inline static hash32
 __hashmap_index_from_key (const hashmap *hm, constdptr key, size_t keysize)
 {
   return hash (key, keysize) % hashmap_bucket_count (hm);
 }
 
+/**
+ * @brief Function to get bucket by index.
+ * 
+ * @param hm Pointer to hashmap instance.
+ * @param index Index to get bucket.
+ * @return forward_list* Forward list of bucket.
+ */
 inline static forward_list *
 __hashmap_bucket_by_index (const hashmap *hm, hash32 index)
 {
   return array_at (hm->buckets, index);
 }
 
+/**
+ * @brief Function to get pair of elements
+ * by key.
+ * 
+ * @param hm Pointer to hashmap instance.
+ * @param key Key to calculate index.
+ * @param keysize Size of key.
+ * @return struct pair* Pair of elements.
+ */
 static struct pair *
 __hashmap_pair_by_key (const hashmap *hm, constdptr key, size_t keysize)
 {
@@ -35,6 +61,13 @@ __hashmap_pair_by_key (const hashmap *hm, constdptr key, size_t keysize)
   return NULL;
 }
 
+
+/**
+ * @brief Function of resizing array of buckets.
+ * 
+ * @param hm Pointer to hashmap instance.
+ * @param size New size.
+ */
 static void
 __hashmap_resize_buckets_array (hashmap *hm, size_t size)
 {

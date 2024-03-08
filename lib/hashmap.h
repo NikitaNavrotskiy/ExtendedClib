@@ -29,7 +29,7 @@ typedef struct hashmap
   size_t size;
 
   /**
-   * @brief Array that contains keys and
+   * @brief Array that contains
    * instances of forward_list.
    */
   array *buckets;
@@ -68,6 +68,7 @@ typedef struct hashmap
  * Return false if key1 != key2.
  * @param size_func Function to compute
  * size of the key.
+ * @param destr Destructor for elements.
  * @return Pointer to new hashmap.
  */
 hashmap *hashmap_create (bool (*pair_keys_cmp) (constdptr pair1,
@@ -81,8 +82,6 @@ hashmap *hashmap_create (bool (*pair_keys_cmp) (constdptr pair1,
  *
  * @param hm Pointer to the instance of hashmap.
  * @param key Key for searching.
- * @param destr Destructor for pairs.
- * Null if just free(pair).
  * @return dptr
  */
 dptr hashmap_at (const hashmap *hm, constdptr key);
@@ -93,7 +92,7 @@ dptr hashmap_at (const hashmap *hm, constdptr key);
  *
  * @param hm Pointer to the instance of hashmap.
  * @param key Key for searching.
- * @return size_t
+ * @return size_t Index of bucket where <key> key is.
  */
 size_t hashmap_bucket (const hashmap *hm, constdptr key);
 

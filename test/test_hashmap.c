@@ -122,6 +122,25 @@ START_TEST (hashmap_test_3)
   hashmap_destroy (hm);
 }
 
+START_TEST (hashmap_test_4)
+{
+  int arr[1000000] = {0};
+  int i;
+  hashmap *hm = hashmap_create (cmp_int, size_func, NULL);
+  for(i = 0; i < 100000; i++)
+  {
+    arr[i] = i;
+    hashmap_insert(hm, &i, arr + i);
+  }
+
+  for(int i = 0; i < 100000; i++)
+  {
+    hashmap_erase(hm, arr + i);
+  }
+
+  hashmap_destroy (hm);
+}
+
 Suite *
 suite_hashmap ()
 {
@@ -134,6 +153,7 @@ suite_hashmap ()
   tcase_add_test (tc, hashmap_test_1);
   tcase_add_test (tc, hashmap_test_2);
   tcase_add_test (tc, hashmap_test_3);
+  tcase_add_test (tc, hashmap_test_4);
 
   suite_add_tcase (s, tc);
 
