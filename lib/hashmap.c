@@ -25,7 +25,7 @@ __hashmap_pair_by_key (const hashmap *hm, constdptr key, size_t keysize)
   // Getting appropriate bucket.
   forward_list *bucket = __hashmap_bucket_by_index (hm, index);
 
-  struct pair pattern = {(dptr)key, NULL};
+  struct pair pattern = { (dptr)key, NULL };
   // Finding pair.
   forward_list_iterator pair = forward_list_find (bucket, &pattern, hm->cmp);
 
@@ -35,44 +35,48 @@ __hashmap_pair_by_key (const hashmap *hm, constdptr key, size_t keysize)
   return NULL;
 }
 
-
-static void __hashmap_resize_buckets_array(hashmap *hm, size_t size)
+static void
+__hashmap_resize_buckets_array (hashmap *hm, size_t size)
 {
   // Saving old buckets.
   array *old_buckets = hm->buckets;
 
   // Creating new buckets.
-  hm->size = size;
-  hm->buckets = array_create(hm->size);
+  hm->buckets = array_create (size);
+
+  // Setting size = 0, because of new insertions.
+  hm->size = 0;
 
   // Creating every bucket.
   for (size_t i = 0; i < size; i++)
     array_push_back (hm->buckets, (dptr *)forward_list_create ());
 
   // Inserting every element from old buckets to new buckets.
-  for (size_t i = 0; i < array_size(old_buckets); i++)
-  {
-    forward_list_iterator cur = forward_list_begin((forward_list *)(old_buckets + i));
-
-    while(cur)
+  for (size_t i = 0; i < array_size (old_buckets); i++)
     {
-      struct pair *cur_pair = (struct pair *)(cur->data);
-      hashmap_insert(hm, cur_pair->key, cur_pair->value);
-      cur = cur->next;
+      forward_list_iterator cur
+          = forward_list_begin ((forward_list *)array_at (old_buckets, i));
+
+      while (cur)
+        {
+          struct pair *cur_pair = (struct pair *)(cur->data);
+          hashmap_insert (hm, cur_pair->key, cur_pair->value);
+          cur = cur->next;
+        }
+
+      forward_list_destroy (array_at (old_buckets, i), hm->destr);
     }
 
-    forward_list_destroy (array_at (hm->buckets, i), hm->destr);
-  }
-
-  array_destroy(old_buckets, hm->destr);
+  array_destroy (old_buckets, NULL);
 }
 
 /*
     Public functions of hashmap's API.
 */
 
-hashmap *hashmap_create (bool (*cmp) (constdptr pair1,
-                                                constdptr pair2), size_t (*size_func)(constdptr key), void (*destr) (dptr pair))
+hashmap *
+hashmap_create (bool (*cmp) (constdptr pair1, constdptr pair2),
+                size_t (*size_func) (constdptr key), void (*destr) (dptr pair))
 {
   // Allocation memory for the hashmap instance.
   hashmap *hm = (hashmap *)malloc (sizeof (hashmap));
@@ -93,7 +97,7 @@ hashmap *hashmap_create (bool (*cmp) (constdptr pair1,
   hm->size_func = size_func;
 
   // Setting destructor for the pair, provided by user.
-  if(destr)
+  if (destr)
     hm->destr = destr;
   else
     hm->destr = pair_destroy_default;
@@ -105,7 +109,7 @@ dptr
 hashmap_at (const hashmap *hm, constdptr key)
 {
   // Getting pair by key.
-  struct pair *pair = __hashmap_pair_by_key (hm, key, hm->size_func(key));
+  struct pair *pair = __hashmap_pair_by_key (hm, key, hm->size_func (key));
 
   // If pair exist, returning its value.
   if (pair)
@@ -118,7 +122,7 @@ hashmap_at (const hashmap *hm, constdptr key)
 inline size_t
 hashmap_bucket (const hashmap *hm, constdptr key)
 {
-  return (size_t)__hashmap_index_from_key (hm, key, hm->size_func(key));
+  return (size_t)__hashmap_index_from_key (hm, key, hm->size_func (key));
 }
 
 inline size_t
@@ -147,7 +151,7 @@ hashmap_clear (hashmap *hm)
 inline bool
 hashmap_contains (const hashmap *hm, constdptr key)
 {
-  return __hashmap_pair_by_key (hm, key, hm->size_func(key)) != NULL;
+  return __hashmap_pair_by_key (hm, key, hm->size_func (key)) != NULL;
 }
 
 inline __attribute__ ((always_inline)) bool
@@ -160,7 +164,7 @@ void
 hashmap_erase (hashmap *hm, constdptr key)
 {
   // Calculating index of bucket by hash.
-  hash32 index = __hashmap_index_from_key (hm, key, hm->size_func(key));
+  hash32 index = __hashmap_index_from_key (hm, key, hm->size_func (key));
 
   // Getting appropriate bucket.
   forward_list *bucket = __hashmap_bucket_by_index (hm, index);
@@ -176,32 +180,32 @@ hashmap_erase (hashmap *hm, constdptr key)
 void
 hashmap_insert (hashmap *hm, constdptr key, constdptr val)
 {
-  // Checking if we need to increase array buckets's size. 
-  if(hashmap_bucket_count(hm) == hm->size)
-    __hashmap_resize_buckets_array(hm, hm->size * HASHMAP_INCREASE_BUCKETS_FACTOR);
-
+  // Checking if we need to increase array buckets's size.
+  if (hashmap_bucket_count (hm) == hm->size)
+    __hashmap_resize_buckets_array (hm, hm->size
+                                            * HASHMAP_INCREASE_BUCKETS_FACTOR);
 
   // Calculating index of bucket by hash.
-  hash32 index = __hashmap_index_from_key (hm, key, hm->size_func(key));
+  hash32 index = __hashmap_index_from_key (hm, key, hm->size_func (key));
 
   // Getting appropriate bucket.
   forward_list *bucket = __hashmap_bucket_by_index (hm, index);
 
   // Creating pattern to find
-  struct pair pattern = {(dptr)key, NULL};
-  
+  struct pair pattern = { (dptr)key, NULL };
+
   // Checking for existance.
-  forward_list_iterator former = forward_list_find(bucket, &pattern, hm->cmp);
+  forward_list_iterator former = forward_list_find (bucket, &pattern, hm->cmp);
 
   // If not exist => Inserting new pair to the bucket.
-  if(former == forward_list_end())
-  {
-    // Creating new pair from <key> and <val>
-    struct pair *pair = pair_create (key, val);
-    forward_list_push_front (bucket, (constdptr)pair);
-    hm->size++;
-    return;
-  }
+  if (former == forward_list_end ())
+    {
+      // Creating new pair from <key> and <val>
+      struct pair *pair = pair_create (key, val);
+      forward_list_push_front (bucket, (constdptr)pair);
+      hm->size++;
+      return;
+    }
   // Else, updating value
   ((struct pair *)(former->data))->value = (dptr)val;
 }

@@ -21,6 +21,12 @@ __array_increase_capacity (array *arr, size_t capacity)
   arr->vec = ptr;
 }
 
+/**
+ * @brief Function to check capacity and
+ * increase if need.
+ *
+ * @param arr Pointer to array instance.
+ */
 inline static void
 __array_increase_capacity_if_need (array *arr)
 {
@@ -29,12 +35,29 @@ __array_increase_capacity_if_need (array *arr)
         arr, (size_t)(arr->capacity * ARRAY_CAPACITY_INCREASE_FACTOR));
 }
 
+/**
+ * @brief Function to get to know index
+ * of iterator.
+ *
+ * @param arr Pointer to array instance.
+ * @param where Iterator, index to know.
+ * @return size_t Index on array, which
+ * iterator points.
+ */
 inline static size_t
 __array_count_index_of_iterator (array *arr, array_iterator where)
 {
   return (size_t)(where - arr->vec);
 }
 
+/**
+ * @brief Function to check if iterator from array.
+ *
+ * @param arr Pointer to array instance.
+ * @param where Iterator to check
+ * @return true If iterator from array.
+ * @return false If iterator not from array.
+ */
 inline static bool
 __array_is_iterator_from_range (array *arr, array_iterator where)
 {
@@ -104,11 +127,11 @@ array_clear (array *arr, void (*destr) (dptr data))
   if (!arr)
     return;
 
-  if(destr)
-  {
-    for (size_t i = 0; i < arr->size; i++)
-      destr (arr->vec[i]);
-  }
+  if (destr)
+    {
+      for (size_t i = 0; i < arr->size; i++)
+        destr (arr->vec[i]);
+    }
   arr->size = 0;
 }
 
@@ -230,7 +253,7 @@ array_erase (array *arr, array_iterator where, void (*destr) (dptr data))
   dptr tmp = *where;
   size_t index = __array_count_index_of_iterator (arr, where);
 
-  if(destr)
+  if (destr)
     destr (tmp);
 
   if (index == arr->size - 1)
@@ -356,7 +379,7 @@ array_pop_back (array *arr, void (*destr) (dptr data))
 {
   if (!arr || array_empty (arr))
     return;
-  if(destr)
+  if (destr)
     destr (arr->vec[arr->size - 1]);
   arr->size--;
 }
@@ -403,7 +426,7 @@ void array_sort (array *arr, int (*cmp) (constdptr first, constdptr second));
 void array_unique (array *arr,
                    bool (*predicate) (constdptr first, constdptr second));
 
-inline __attribute__ ((always_inline)) size_t
+inline size_t
 array_size (array *arr)
 {
   if (!arr)

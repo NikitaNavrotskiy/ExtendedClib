@@ -88,7 +88,6 @@ pair_destroy (struct pair *pair, void (*destr) (struct pair *pair))
   free (pair);
 }
 
-
 inline void
 pair_destroy_default (dptr pair)
 {

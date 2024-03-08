@@ -157,7 +157,7 @@ struct pair *pair_create (constdptr key, constdptr val);
  * node is nullptr.
  *
  * @param pair struct pair to destroy
- * @param destr Funciton to destroy pair correctly,
+ * @param destr Funciton to destroy pair's value and key only,
  * Should be NULL, if do not should be freed.
  */
 void pair_destroy (struct pair *pair, void (*destr) (struct pair *pair));

@@ -46,7 +46,7 @@ typedef struct hashmap
    * @brief Function to get to know size
    * of the key. Needs for hash alg.
    */
-  size_t (*size_func)(constdptr);
+  size_t (*size_func) (constdptr);
 
   /**
    * @brief Destructor for pairs.
@@ -71,7 +71,9 @@ typedef struct hashmap
  * @return Pointer to new hashmap.
  */
 hashmap *hashmap_create (bool (*pair_keys_cmp) (constdptr pair1,
-                                                constdptr pair2), size_t (*size_func)(constdptr key), void (*destr) (dptr pair));
+                                                constdptr pair2),
+                         size_t (*size_func) (constdptr key),
+                         void (*destr) (dptr pair));
 
 /**
  * @brief Function to get value by key from the
@@ -79,6 +81,8 @@ hashmap *hashmap_create (bool (*pair_keys_cmp) (constdptr pair1,
  *
  * @param hm Pointer to the instance of hashmap.
  * @param key Key for searching.
+ * @param destr Destructor for pairs.
+ * Null if just free(pair).
  * @return dptr
  */
 dptr hashmap_at (const hashmap *hm, constdptr key);
