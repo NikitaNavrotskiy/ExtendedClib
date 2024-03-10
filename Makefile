@@ -5,12 +5,12 @@ CC=gcc
 CFLAGS=-Werror -Wall -Wextra -O3 -march=native
 
 
-HEADERS=lib/queue.h lib/types.h lib/stack.h lib/list.h  lib/forward_list.h \
-	lib/array.h lib/hash.h lib/hashmap.h lib/hashset.h lib/linear_allocator.h \
-	lib/pool_allocator.h
-SRC=lib/types.c lib/queue.c lib/stack.c lib/list.c lib/forward_list.c \
-	lib/array.c lib/hash.c lib/hashmap.c lib/hashset.c lib/linear_allocator.c \
-	lib/pool_allocator.c
+HEADERS=lib/string_array.h lib/queue.h lib/types.h lib/stack.h lib/list.h  \
+	lib/forward_list.h lib/array.h lib/hash.h lib/hashmap.h lib/hashset.h \
+	lib/linear_allocator.h lib/pool_allocator.h
+SRC=lib/string_array.c lib/types.c lib/queue.c lib/stack.c lib/list.c \
+	lib/forward_list.c lib/array.c lib/hash.c lib/hashmap.c lib/hashset.c \
+	lib/linear_allocator.c lib/pool_allocator.c
 OBJ=$(SRC:.c=.o)
 
 
@@ -64,7 +64,7 @@ uninstall:
 
 
 dvi:
-
+	open README.md
 
 dist:
 

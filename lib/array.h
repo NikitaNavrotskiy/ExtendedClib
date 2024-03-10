@@ -38,10 +38,9 @@ typedef struct array
  */
 typedef dptr *array_iterator;
 
-/**
- * @brief Public API functions of the array.
- *
- */
+////////////////////////////////////////////////////
+/*       Public API functions of the array        */
+////////////////////////////////////////////////////
 
 /**
  * @brief Function to create new Array.

@@ -1,5 +1,11 @@
 #include "pool_allocator.h"
 
+
+
+////////////////////////////////////////////////////
+/*  Public API functions of the pool_allocator    */
+////////////////////////////////////////////////////
+
 pool_allocator *
 pool_allocator_create (size_t block_size, size_t blocks_number)
 {

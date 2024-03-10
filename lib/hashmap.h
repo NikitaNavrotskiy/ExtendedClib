@@ -54,10 +54,10 @@ typedef struct hashmap
   void (*destr) (dptr);
 } hashmap;
 
-/**
- * @brief Public API functions of the hashmap.
- *
- */
+
+////////////////////////////////////////////////////
+/*     Public API functions of the hashmap        */
+////////////////////////////////////////////////////
 
 /**
  * @brief Function to create new hashmap. Allocates the memory. Should be

@@ -42,10 +42,10 @@ typedef struct linear_allocator
   uint8_t align;
 } linear_allocator;
 
-/**
- * @brief Public API functions of the linear_allocator.
- *
- */
+
+////////////////////////////////////////////////////
+/* Public API functions of the linear_allocator   */
+////////////////////////////////////////////////////
 
 /**
  * @brief Contructor for the linear allocator.

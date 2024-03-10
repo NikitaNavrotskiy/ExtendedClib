@@ -54,10 +54,9 @@ typedef struct hashset
   void (*destr) (dptr);
 } hashset;
 
-/**
- * @brief Public API functions of the hashset.
- *
- */
+////////////////////////////////////////////////////
+/*     Public API functions of the hashset        */
+////////////////////////////////////////////////////
 
 /**
  * @brief Function to create new hashset. Allocates the memory. Should be

@@ -32,10 +32,11 @@ typedef struct stack
   size_t size;
 } stack;
 
-/**
- * @brief Public API functions of the stack.
- *
- */
+
+////////////////////////////////////////////////////
+/*      Public API functions of the stack         */
+////////////////////////////////////////////////////
+
 
 /**
  * @brief Function to create new stack. Allocates the memory. Should be

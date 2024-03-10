@@ -41,10 +41,10 @@ typedef struct list
   struct lnode *back;
 } list;
 
-/**
- * @brief Public API functions of the list.
- *
- */
+
+////////////////////////////////////////////////////
+/*        Public API functions of the list        */
+////////////////////////////////////////////////////
 
 /**
  * @brief Function to create new list. Allocates the memory. Should be

@@ -1,8 +1,8 @@
 #include "hashmap.h"
 
-/*
-    Private function of hashmap.
-*/
+////////////////////////////////////////////////////
+/*       Private functions of the hashmap         */
+////////////////////////////////////////////////////
 
 /**
  * @brief Function to calculate index
@@ -101,9 +101,9 @@ __hashmap_resize_buckets_array (hashmap *hm, size_t size)
   array_destroy (old_buckets, NULL);
 }
 
-/*
-    Public functions of hashmap's API.
-*/
+////////////////////////////////////////////////////
+/*     Public API functions of the hashset        */
+////////////////////////////////////////////////////
 
 hashmap *
 hashmap_create (bool (*cmp) (constdptr pair1, constdptr pair2),

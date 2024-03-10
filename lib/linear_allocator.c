@@ -1,5 +1,10 @@
 #include "linear_allocator.h"
 
+
+////////////////////////////////////////////////////
+/* Public API functions of the linear_allocator   */
+////////////////////////////////////////////////////
+
 linear_allocator *
 linear_allocator_create (size_t capacity, uint8_t align)
 {

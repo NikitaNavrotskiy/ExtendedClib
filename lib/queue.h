@@ -35,10 +35,9 @@ typedef struct queue
   struct qnode *back;
 } queue;
 
-/**
- * @brief Public API functions of the queue.
- *
- */
+////////////////////////////////////////////////////
+/*      Public API functions of the queue         */
+////////////////////////////////////////////////////
 
 /**
  * @brief Function to create new queue. Allocates the memory. Should be

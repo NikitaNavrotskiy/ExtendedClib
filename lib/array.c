@@ -1,9 +1,8 @@
 #include "array.h"
 
-/**
- * @brief Private functions.
- *
- */
+////////////////////////////////////////////////////
+/*         Private functions of the array         */
+////////////////////////////////////////////////////
 
 /**
  * @brief Function to increase capacity if
@@ -64,10 +63,9 @@ __array_is_iterator_from_range (array *arr, array_iterator where)
   return arr->vec <= where && where < arr->vec + arr->size;
 }
 
-/**
- * @brief Public API functions of the array implementation.
- *
- */
+////////////////////////////////////////////////////
+/*       Public API functions of the array        */
+////////////////////////////////////////////////////
 
 array *
 array_create (size_t capacity)

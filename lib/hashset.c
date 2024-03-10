@@ -1,8 +1,9 @@
 #include "hashset.h"
 
-/*
-    Private function of hashset.
-*/
+
+////////////////////////////////////////////////////
+/*       Private functions of the hashset         */
+////////////////////////////////////////////////////
 
 /**
  * @brief Function to calculate index
@@ -98,9 +99,9 @@ __hashset_resize_buckets_array (hashset *hs, size_t size)
   array_destroy (old_buckets, NULL);
 }
 
-/*
-    Public functions of hashset's API.
-*/
+////////////////////////////////////////////////////
+/*     Public API functions of the hashset        */
+////////////////////////////////////////////////////
 
 hashset *
 hashset_create (bool (*cmp) (constdptr val1, constdptr val2),

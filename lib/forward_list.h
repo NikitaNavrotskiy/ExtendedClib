@@ -37,10 +37,9 @@ typedef struct forward_list
   struct flnode *front;
 } forward_list;
 
-/**
- * @brief Public API functions of the forward list.
- *
- */
+////////////////////////////////////////////////////
+/*   Public API functions of the forward_list     */
+////////////////////////////////////////////////////
 
 /**
  * @brief Function to create new forward list. Allocates the memory. Should be

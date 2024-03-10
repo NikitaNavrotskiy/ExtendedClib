@@ -45,10 +45,10 @@ typedef struct pool_allocator
   forward_list *free_blocks;
 } pool_allocator;
 
-/**
- * @brief Public API functions of the pool_allocator.
- *
- */
+
+////////////////////////////////////////////////////
+/*  Public API functions of the pool_allocator    */
+////////////////////////////////////////////////////
 
 /**
  * @brief Contructor for the pool allocator.
