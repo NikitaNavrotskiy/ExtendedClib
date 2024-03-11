@@ -27,9 +27,14 @@ typedef struct stack
   struct snode *top;
 
   /**
-   * @brief variable to store size of the stack.
+   * @brief Variable to store size of the stack.
    */
   size_t size;
+
+  /**
+   * @brief Destructor for data.
+   */
+  void (*destr) (dptr);
 } stack;
 
 
@@ -41,9 +46,10 @@ typedef struct stack
 /**
  * @brief Function to create new stack. Allocates the memory. Should be
  * destroyed at the end.
+ * @param destr Destructor for data.
  * @return Pointer to new stack.
  */
-stack *stack_create ();
+stack *stack_create (void (*destr) (dptr data));
 
 /**
  * @brief Function to push new element to the stack's top..
@@ -57,10 +63,8 @@ void stack_push (stack *s, constdptr data);
  * @brief Function to pop top element from the stack.
  * Do not check if stack is empty.
  * @param s Stack to pop element.
- * @param destr  Pointer to function, to
- * free memory of datas correctly.
  */
-void stack_pop (stack *s, void (*destr) (dptr data));
+void stack_pop (stack *s);
 
 /**
  * @brief Function to get top element from the Stack.
@@ -91,9 +95,7 @@ bool stack_empty (const stack *s);
  * @brief Function to destroy stack. Frees the memory.
  * Not checking that s == nullptr.
  * @param s Pointer of the stack to destroy.
- * @param destr Pointer to function, to
- * free memory of datas correctly.
  */
-void stack_destroy (stack *s, void (*destr) (dptr data));
+void stack_destroy (stack *s);
 
 #endif

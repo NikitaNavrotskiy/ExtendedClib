@@ -33,6 +33,11 @@ typedef struct queue
    * @brief Pointer to the back of queue.
    */
   struct qnode *back;
+
+  /**
+   * @brief Destructor for data.
+   */
+  void (*destr) (dptr);
 } queue;
 
 ////////////////////////////////////////////////////
@@ -42,9 +47,10 @@ typedef struct queue
 /**
  * @brief Function to create new queue. Allocates the memory. Should be
  * destroyed at the end.
+ * @param destr Destructor for data.
  * @return Pointer to new queue.
  */
-queue *queue_create ();
+queue *queue_create (void (*destr) (dptr data));
 
 /**
  * @brief Function to push new element to the queue's front.
@@ -58,10 +64,8 @@ void queue_push (queue *q, constdptr data);
  * @brief Function to pop last element from the queue
  *
  * @param q Queue to pop element.
- * @param destr Pointer to function, to
- * free memory of datas correctly.
  */
-void queue_pop (queue *q, void (*destr) (dptr data));
+void queue_pop (queue *q);
 
 /**
  * @brief Function to get front element.
@@ -100,9 +104,7 @@ bool queue_empty (const queue *q);
  * @brief Function to destroy queue. Frees the memory.
  * Not checking that q == nullptr.
  * @param q Pointer of the queue to destroy.
- * @param destr Pointer to function, to
- * free memory of datas correctly.
  */
-void queue_destroy (queue *q, void (*destr) (dptr data));
+void queue_destroy (queue *q);
 
 #endif
