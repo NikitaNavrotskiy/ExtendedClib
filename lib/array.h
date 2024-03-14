@@ -15,6 +15,11 @@
 #define ARRAY_CAPACITY_INCREASE_FACTOR 2
 #define ARRAY_CAPACITY_DEFAULT 10
 
+/**
+ * @struct array
+ * @brief Implementation of array.
+ * 
+ */
 typedef struct array
 {
   /**
