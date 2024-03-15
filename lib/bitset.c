@@ -160,16 +160,14 @@ void bitset_flip(bitset *b, size_t pos)
     if(pos >= b->n)
         return;
 
+    // getting bit from pos.
     char nbit = pos % 8;
     
-    // working with byte.
-    char byte = b->bits[pos / 8];
-
-    // copying <pos> bit.
-    byte = ((char)bitset_test(b, nbit)) << nbit;
+    // making mask
+    char mask = 1 << nbit;
 
     // using ^ to inverse bit.
-    b->bits[pos / 8] ^= ~byte;
+    b->bits[pos / 8] ^= mask;
 }
 
 void bitset_flip_all(bitset *b)
