@@ -106,17 +106,6 @@ void bitset_flip(bitset *b, size_t pos);
 void bitset_flip_all(bitset *b);
 
 /**
- * @brief Checking if at least one
- * bit is set.
- * 
- * @param b Pointer to bitset instance. 
- * @return true if at least one bit 
- * is set.
- * @return false if zero bits are set.
- */
-bool bitset_none(bitset *b);
-
-/**
  * @brief Reseting bit on <pos> position.
  * 
  * @param b Pointer to bitset instance. 
@@ -177,6 +166,7 @@ void bitset_to_data(bitset *b, dptr data, size_t size);
 
 /**
  * @brief Destructor of bitset.
+ * sizes should be equal.
  * 
  * @param b Pointer to bitset instance.
  */

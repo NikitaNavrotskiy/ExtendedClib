@@ -5,6 +5,63 @@
 ////////////////////////////////////////////////////
 
 
+/**
+ * @brief Function to compare bytes.
+ * 
+ * @param b1 First byte.
+ * @param b2 Second byte.
+ * @return true If bytes are equal.
+ * @return false If bytes aren't equal.
+ */
+inline static bool __bitset_compare_byte(char b1, char b2)
+{
+    return (b1 ^ b2) == 0;
+}
+
+/**
+ * @brief Count bytes from bits (rounding up).
+ * 
+ * @param bits Number of bits.
+ * @return size_t Resulting number of bytes.
+ */
+inline static size_t __bitset_total_bytes_from_bits(size_t bits)
+{
+    size_t extra = bits % 8 != 0 ? 1 : 0;
+    return extra + bits / 8;
+}
+
+static bool __bitset_test_bit_in_byte(char byte, char nbit)
+{
+    return (byte & (1 << nbit));
+}
+
+/**
+ * @brief Number of bits, that are set in byte, where
+ * only nbits.
+ * 
+ * @param byte Byte from to count. 
+ * @param nbits Number of bits.
+ * @return char Resulting number of
+ * bits are set.
+ */
+static char __bitset_count_set_extra_bits(char byte, char nbits)
+{
+    char res = 0;
+    // Setting mask to remove begging bits.
+    char mask = 0xFF >> (8 - nbits);
+    
+    byte &= mask;
+
+    for(int i = nbits - 1; i >= 0; i--)
+    {
+        if(__bitset_test_bit_in_byte(byte, i))
+            res++;
+    }
+
+    return res;
+}
+
+
 ////////////////////////////////////////////////////
 /*       Public API functions of the bitset       */
 ////////////////////////////////////////////////////
@@ -35,17 +92,93 @@ bitset *bitset_create_from_data(dptr data, size_t size)
     return b;
 }
 
-bool bitset_all(bitset *b);
+bool bitset_all(bitset *b)
+{
+    size_t nbytes = __bitset_total_bytes_from_bits(b->n);
+    size_t i = 0;
+    char extra_bits = nbytes - b->n / 8;
+    bool res = true;
 
-bool bitset_any(bitset *b);
+    // Checking extra part.
+    if(extra_bits)
+    {
+        i = 1;
+        res = __bitset_count_set_extra_bits(b->bits[0], b->n - (nbytes - 1) * 8) != 0;
+    }
 
-size_t bitset_count(bitset *b);
+    // Checking integral bytes.
+    for(; i < nbytes && res; i++)
+        res = res || (b->bits[i] != 0);
 
-void bitset_flip(bitset *b, size_t pos);
+    return res;
+}
 
-void bitset_flip_all(bitset *b);
+bool bitset_any(bitset *b)
+{
+    size_t nbytes = __bitset_total_bytes_from_bits(b->n);
+    size_t i = 0;
+    char extra_bits = nbytes - b->n / 8;
+    bool res = false;
 
-bool bitset_none(bitset *b);
+    // Checking extra part.
+    if(extra_bits)
+    {
+        i = 1;
+        res = extra_bits == __bitset_count_set_extra_bits(b->bits[0], b->n - (nbytes - 1) * 8);
+    }
+
+    // Checking integral bytes.
+    for(; i < nbytes && !res; i++)
+        res |= b->bits[i];
+
+    return res;
+}
+
+size_t bitset_count(bitset *b)
+{
+    size_t nbytes = __bitset_total_bytes_from_bits(b->n);
+    size_t i = 0;
+    size_t res = 0;
+    char extra_bits = nbytes - b->n / 8;
+
+    // Counting extra part.
+    if(extra_bits)
+    {
+        i = 1;
+        res += (size_t)__bitset_count_set_extra_bits(b->bits[0], b->n - (nbytes - 1) * 8);
+    }
+
+    // Counting integral bytes.
+    for(; i < nbytes; i++)
+        res += (size_t)__bitset_count_set_extra_bits(b->bits[i], 8);    
+
+    return res;
+}
+
+void bitset_flip(bitset *b, size_t pos)
+{
+    if(pos >= b->n)
+        return;
+
+    char nbit = pos % 8;
+    
+    // working with byte.
+    char byte = b->bits[pos / 8];
+
+    // copying <pos> bit.
+    byte = ((char)bitset_test(b, nbit)) << nbit;
+
+    // using ^ to inverse bit.
+    b->bits[pos / 8] ^= ~byte;
+}
+
+void bitset_flip_all(bitset *b)
+{
+    size_t nbytes = __bitset_total_bytes_from_bits(b->n);
+
+    for(size_t i = 0; i < nbytes; i++)
+        b->bits[i] = ~b->bits[i];
+}
 
 void bitset_reset(bitset *b, size_t pos)
 {
@@ -74,8 +207,7 @@ void bitset_reset(bitset *b, size_t pos)
 inline void bitset_reset_all(bitset *b)
 {
     // setting all bytes to zero.
-    char extra = b->n % 8 != 0 ? 1 : 0;
-    memset(b->bits, 0, b->n / 8 + extra);
+    memset(b->bits, 0, __bitset_total_bytes_from_bits(b->n));
 }
 
 void bitset_set(bitset *b, size_t pos)
@@ -102,8 +234,7 @@ void bitset_set(bitset *b, size_t pos)
 inline void bitset_set_all(bitset *b)
 {
     // setting all bytes to one.
-    char extra = b->n % 8 != 0 ? 1 : 0;
-    memset(b->bits, 0xFF, b->n / 8 + extra);
+    memset(b->bits, 0xFF, __bitset_total_bytes_from_bits(b->n));
 }
 
 inline __attribute__((__always_inline__)) size_t 
@@ -126,7 +257,13 @@ bool bitset_test(bitset *b, size_t pos)
     return byte & 1;
 }
 
-void bitset_to_data(bitset *b, dptr data, size_t size);
+void bitset_to_data(bitset *b, dptr data, size_t size)
+{
+    if(size * 8 != b->n)
+        return;
+
+    memcpy(data, b->bits, size);
+}
 
 void bitset_destroy(bitset *b)
 {
