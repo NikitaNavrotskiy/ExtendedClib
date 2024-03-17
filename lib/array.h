@@ -18,7 +18,7 @@
 /**
  * @struct array
  * @brief Implementation of array.
- * 
+ *
  */
 typedef struct array
 {

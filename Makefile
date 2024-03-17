@@ -24,7 +24,7 @@ TEST_SRC=$(SRC) test/test.c test/test_queue.c test/test_stack.c test/test_list.c
 	test/test_bitset.c 																	\
 	test/test_linear_allocator.c test/test_pool_allocator.c 
 
-TEST_FLAGS=-lcheck -lm -lsubunit
+TEST_FLAGS=-lcheck -lm
 TEST_EXEC=$(NAME)_test
 
 

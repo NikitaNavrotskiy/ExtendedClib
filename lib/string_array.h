@@ -13,10 +13,8 @@
 
 #include "types.h"
 
-
 #define STRING_ARRAY_CAPACITY_INCREASE_FACTOR 2
 #define STRING_ARRAY_CAPACITY_DEFAULT 10
-
 
 typedef struct string
 {
@@ -36,14 +34,9 @@ typedef struct string
   size_t capacity;
 } string;
 
-
-
-
 ////////////////////////////////////////////////////
 /*   Public API functions of the string array     */
 ////////////////////////////////////////////////////
-
-
 
 ////////////////////////////////////////////////////
 /*             Bunch of constructors.             */
@@ -60,52 +53,45 @@ typedef struct string
  */
 string *string_create_capacity (size_t capacity);
 
-
 /**
  * @brief Constructor. Creates new string
  * from c_str (char * array).
  * Allocates the memory. Should be
  * destroyed at the end.
- * 
+ *
  * @param c_str Null terminated char array.
  * @return string* Pointer to new string.
  */
-string *string_create_c_str(const char *c_str);
-
+string *string_create_c_str (const char *c_str);
 
 /**
  * @brief Constructor. Creates new string
  * with <count> times <sym>.
  * Allocates the memory. Should be
  * destroyed at the end.
- * 
+ *
  * @param sym Sym in new string.
  * @param count Number of <sym> in new string.
  * @return string* Pointer to new string.
  */
-string *string_create_char(char sym, size_t count);
-
+string *string_create_char (char sym, size_t count);
 
 /**
  * @brief Constructor. Creates new string
  * with default params.
  * @return string* Pointer to new string.
  */
-string *string_create_default();
-
+string *string_create_default ();
 
 ////////////////////////////////////////////////////
 /*         End of Bunch of constructors.          */
 ////////////////////////////////////////////////////
 
-
 /**
  * @brief Destructor for string.
- * 
+ *
  * @param str String to destroy.
  */
-void string_destroy(string *str);
-
-
+void string_destroy (string *str);
 
 #endif

@@ -37,11 +37,9 @@ typedef struct stack
   void (*destr) (dptr);
 } stack;
 
-
 ////////////////////////////////////////////////////
 /*      Public API functions of the stack         */
 ////////////////////////////////////////////////////
-
 
 /**
  * @brief Function to create new stack. Allocates the memory. Should be
