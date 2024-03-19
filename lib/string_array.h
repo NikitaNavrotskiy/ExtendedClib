@@ -148,28 +148,120 @@ char string_back (const string *str);
  */
 string_iterator string_begin (const string *str);
 
-char *string_c_str (const string *str);
+/**
+ * @brief Returns const c-style string
+ * from str. Should not be freed, only
+ * through destructor of string.
+ *
+ * @param Pointer to string.
+ * @return const char * c-style string.
+ */
+const char *string_c_str (const string *str);
 
+/**
+ * @brief Returns current capacity
+ * of the string.
+ *
+ * @param str Pointer to string.
+ * @return size_t Capacity.
+ */
 size_t string_capacity (const string *str);
 
+/**
+ * @brief Clearing string, but
+ * do not free it.
+ *
+ * @param str Pointer to the string.
+ */
 void string_clear (string *str);
 
+/**
+ * @brief Compare <str1> and <str2>.
+ *
+ * @param str1 Pointer to the first string.
+ * @param str2 Pointer to the second string.
+ * @return int Return
+ * (int < 0) if str2 > str1 or str1 is Null,
+ * (int > 0) if str2 < str1 or str2 is Null,
+ * (int = 0) if str1 = str2.
+ */
 int string_compare (const string *str1, const string *str2);
 
+/**
+ * @brief Compare <str1> and <c_str>.
+ *
+ * @param str1 Pointer string.
+ * @param c_str Pointer to c-style string.
+ * @return int Return
+ * (int < 0) if c_str > str or str is Null,
+ * (int > 0) if c_str < str or c_str is Null,
+ * (int = 0) if str = c_str.
+ */
 int string_compare_c_str (const string *str, const char *c_str);
 
+/**
+ * @brief Compare substr of <str1> and
+ * substr of <str2>.
+ *
+ * @param str1 Pointer to the first string.
+ * @param offset1 Starting index for comparing
+ * for str1.
+ * @param count1 Number of symbols for comparing
+ * for str1.
+ * @param str2 Pointer to the second string.
+ * @param offset2 Starting index for comparing
+ * for str2.
+ * @param count2 Number of symbols for comparing
+ * for str2.
+ * @return int Return
+ * (int < 0) if str2 > str1 or str1 is Null,
+ * (int > 0) if str2 < str1 or str2 is Null,
+ * (int = 0) if str1 = str2.
+ */
 int string_compare_substr (const string *str1, size_t offset1, size_t count1,
                            const string *str2, size_t offset2, size_t count2);
 
-string string_copy (const string *str);
+/**
+ * @brief Return new instance that
+ * copies str.
+ *
+ * @param str Pointer to string.
+ * @return string * New instance of string
+ * that copies old string.
+ */
+string *string_copy (const string *str);
 
-string string_copy_substr (const string *str, size_t offset, size_t count);
+/**
+ * @brief Return new instance that
+ * copies substring of str.
+ *
+ * @param str Pointer to string.
+ * @return string * New instance of string
+ * that copies substring of old string.
+ */
+string *string_copy_substr (const string *str, size_t offset, size_t count);
 
-char *string_data (const string *str);
+/**
+ * @brief Returns const c-style string
+ * from str. Should not be freed, only
+ * through destructor of string.
+ *
+ * @param Pointer to string.
+ * @return const char * c-style string.
+ */
+const char *string_data (const string *str);
 
+/**
+ * @brief Checking that <str> is empty.
+ *
+ * @param str Pointer to the string.
+ * @return bool
+ * true if str is empty.
+ * false if str is not empty.
+ */
 bool string_empty (const string *str);
 
-string_iterator string_end ();
+string_iterator string_end (const string *str);
 
 bool string_ends_with (const string *str, const char *suffix);
 
@@ -216,9 +308,9 @@ string_iterator string_insert_c_str (string *str, const char *ins, size_t pos);
 string_iterator string_insert_substr (string *str, const string *ins,
                                       size_t pos, size_t offset, size_t count);
 
-string_iterator string_insert_sub_c_str (string *str, const char *ins,
-                                         size_t pos, size_t offset,
-                                         size_t count);
+string_iterator string_insert_subcstr (string *str, const char *ins,
+                                       size_t pos, size_t offset,
+                                       size_t count);
 
 string_iterator string_insert_char (string *str, char c, size_t pos,
                                     size_t times);
@@ -249,8 +341,8 @@ size_t string_replace_c_str (string *str, const char *rep, size_t pos,
 size_t string_replace_substr (string *str, const string *rep, size_t pos,
                               size_t offset, size_t count);
 
-size_t string_replace_sub_c_str (string *str, const char *rep, size_t pos,
-                                 size_t offset, size_t count);
+size_t string_replace_subcstr (string *str, const char *rep, size_t pos,
+                               size_t offset, size_t count);
 
 size_t string_replace_char (string *str, char c, size_t pos, size_t times);
 
@@ -271,6 +363,12 @@ size_t string_rfind_any_of (const string *str, const char *charset,
 
 size_t string_shrink_to_fit (string *str);
 
+/**
+ * @brief Return size of the string.
+ *
+ * @param str Pointer to the string.
+ * @return size_t Size of the string.
+ */
 size_t string_size (const string *str);
 
 bool string_starts_with (const string *str, const char *suffix);
