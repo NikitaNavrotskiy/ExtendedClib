@@ -61,6 +61,30 @@ string_create_default ()
   return string_create_capacity (STRING_ARRAY_CAPACITY_DEFAULT);
 }
 
+char
+string_at (string *str, size_t pos)
+{
+  if (!str || pos < 0 || pos >= str->size)
+    return '\0';
+  return str->arr[pos];
+}
+
+char
+string_back (string *str)
+{
+  if (!str || str->size == 0)
+    return '\0';
+  return str->arr[str->size - 1];
+}
+
+string_iterator
+string_begin (string *str)
+{
+  if (!str || str->size == 0)
+    return string_end ();
+  return str->arr;
+}
+
 void
 string_destroy (string *str)
 {
