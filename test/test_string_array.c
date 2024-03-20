@@ -4,13 +4,38 @@
 START_TEST (string_test_1)
 {
   const char *c_str = "somewhat";
+  const char *app_c_str = "somewhere";
+  const char *app2_c_str = "CANNOT";
 
   string *str = string_create_c_str (c_str);
+  string *str_app = string_create_c_str (app_c_str);
+
   ck_assert (string_size (str) == strlen (c_str));
   ck_assert (string_capacity (str) == strlen (c_str) + 1);
   for (size_t i = 0; i < strlen (c_str); i++)
     ck_assert (c_str[i] == string_at (str, i));
 
+  string_append (str, str_app);
+
+  ck_assert_str_eq (str->arr, "somewhatsomewhere");
+  ck_assert (string_size (str) == 17);
+
+  string_append_c_str (str, app2_c_str);
+
+  ck_assert_str_eq (str->arr, "somewhatsomewhereCANNOT");
+  ck_assert_uint_eq (string_size (str), 23);
+
+  string_resize (str, 50);
+
+  ck_assert_str_eq (str->arr, "somewhatsomewhereCANNOT");
+  ck_assert_uint_eq (string_size (str), 50);
+
+  string_resize (str, 10);
+
+  ck_assert_str_eq (str->arr, "somewhatso");
+  ck_assert_uint_eq (string_size (str), 10);
+
+  string_destroy (str_app);
   string_destroy (str);
 }
 

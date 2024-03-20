@@ -261,43 +261,110 @@ const char *string_data (const string *str);
  */
 bool string_empty (const string *str);
 
+/**
+ * @brief Returns iterator to the element after
+ * last (to '\0').
+ *
+ * @param str Pointer to the string.
+ * @return string_iterator Iterator to
+ * the element after last.
+ */
 string_iterator string_end (const string *str);
 
+/**
+ * @brief Checking if string ends with one
+ * of the symbols in suffix.
+ *
+ * @param str Pointer to the string.
+ * @param suffix c-style string with
+ * symbols to find.
+ * @return bool
+ * true If one of the symbols of suffix is ends of
+ * string.
+ * false otherwise.
+ */
 bool string_ends_with (const string *str, const char *suffix);
 
+/**
+ * @brief Erase symbols from <first> to <last> iterators.
+ * Iterators Should be not NULL. first and last included.
+ *
+ * @param str Pointer to the string.
+ * @param first Iterator where erasing starts from.
+ * @param last Iterator where erasing finishes.
+ * @return string_iterator Iterator to the first element
+ * after last deleted.
+ */
 string_iterator string_erase_range (string *str, string_iterator first,
                                     string_iterator last);
 
+/**
+ * @brief Erase <count> symbols from <offset> index.
+ *
+ * @param str Pointer to the string.
+ * @param offset Index of first element to erase.
+ * @param count Number of symbols to erase.
+ */
 void string_erase_substr (string *str, size_t offset, size_t count);
 
-size_t string_find (const string *str, char c, size_t offset, size_t count);
+/**
+ * @brief Returns index of first found <c> in <str> in
+ * range of indexes from <offset> to <offset> + <count> - 1.
+ *
+ * @param str Pointer to the string.
+ * @param c Symbol to find.
+ * @param offset First index to find in.
+ * @param count Number of symbols to find in.
+ * @return Index of first found element or -1 if
+ * not found.
+ */
+ssize_t string_find (const string *str, char c, size_t offset, size_t count);
 
-size_t string_find_any_of (const string *str, const char *charset,
-                           size_t offset, size_t count);
+/**
+ * @brief Returns index of first found symbol from
+ * <charset> in <str> in range of indexes from <offset>
+ * to <offset> + <count> - 1.
+ *
+ * @param str Pointer to the string.
+ * @param charset Symbols to find.
+ * @param offset First index to find in.
+ * @param count Number of symbols to find in.
+ * @return Index of first found element or -1 if
+ * not found.
+ */
+ssize_t string_find_any_of (const string *str, const char *charset,
+                            size_t offset, size_t count);
 
-size_t string_find_first_not_of (const string *str, char c, size_t offset,
-                                 size_t count);
+/**
+ * @brief Returns index of first element from
+ * that not equal to <c> from <str> in
+ * range of indexes from <offset>
+ * to <offset> + <count> - 1.
+ *
+ * @param str Pointer to the string.
+ * @param c Symbols to find.
+ * @param offset First index to find in.
+ * @param count Number of symbols to find in.
+ * @return Index of first found element or -1 if
+ * not found.
+ */
+ssize_t string_find_first_not_of (const string *str, char c, size_t offset,
+                                  size_t count);
 
-size_t string_find_any_first_not_of (const string *str, const char *charset,
-                                     size_t offset, size_t count);
-
-size_t string_find_first_of (const string *str, char c, size_t offset,
-                             size_t count);
-
-size_t string_find_any_first_of (const string *str, const char *charset,
-                                 size_t offset, size_t count);
-
-size_t string_find_last_not_of (const string *str, char c, size_t offset,
-                                size_t count);
-
-size_t string_find_any_last_not_of (const string *str, const char *charset,
-                                    size_t offset, size_t count);
-
-size_t string_find_last_of (const string *str, char c, size_t offset,
-                            size_t count);
-
-size_t string_find_any_last_of (const string *str, const char *charset,
-                                size_t offset, size_t count);
+/**
+ * @brief Returns index of first found symbol not from
+ * <charset> in <str> in range of indexes from <offset>
+ * to <offset> + <count> - 1.
+ *
+ * @param str Pointer to the string.
+ * @param charset Symbols to find.
+ * @param offset First index to find in.
+ * @param count Number of symbols to find in.
+ * @return Index of first found element or -1 if
+ * not found.
+ */
+ssize_t string_find_any_first_not_of (const string *str, const char *charset,
+                                      size_t offset, size_t count);
 
 char string_front (const string *str);
 
@@ -354,13 +421,58 @@ size_t string_replace_iter_char (string *str, string_iterator first,
 
 void string_reserve (string *str, size_t count);
 
-void string_resize (string *str);
+void string_resize (string *str, size_t size);
 
+/**
+ * @brief Returns index of last found <c> in <str> in
+ * range of indexes from <offset> to <offset> + <count> - 1.
+ *
+ * @param str Pointer to the string.
+ * @param c Symbol to find.
+ * @param offset First index to find in.
+ * @param count Number of symbols to find in.
+ * @return Index of last found element or -1 if
+ * not found.
+ */
 size_t string_rfind (const string *str, char c, size_t offset, size_t count);
 
+/**
+ * @brief Returns index of last found symbol from
+ * <charset> in <str> in range of indexes from <offset>
+ * to <offset> + <count> - 1.
+ *
+ * @param str Pointer to the string.
+ * @param charset Symbols to find.
+ * @param offset First index to find in.
+ * @param count Number of symbols to find in.
+ * @return Index of last found element or -1 if
+ * not found.
+ */
 size_t string_rfind_any_of (const string *str, const char *charset,
                             size_t offset, size_t count);
 
+/**
+ * @brief Returns index of last element from that not equal to <c>
+ * from <str> in range of indexes from <offset>
+ * to <offset> + <count> - 1.
+ *
+ * @param str Pointer to the string.
+ * @param c Symbols to find.
+ * @param offset First index to find in.
+ * @param count Number of symbols to find in.
+ * @return Index of last found element or -1 if
+ * not found.
+ */
+ssize_t string_rfind_any_first_not_of (const string *str, const char *charset,
+                                       size_t offset, size_t count);
+
+/**
+ * @brief Removing extra capacity from
+ * string.
+ *
+ * @param str Pointer to the string.
+ * @return size_t New capacity.
+ */
 size_t string_shrink_to_fit (string *str);
 
 /**
@@ -371,8 +483,30 @@ size_t string_shrink_to_fit (string *str);
  */
 size_t string_size (const string *str);
 
+/**
+ * @brief Checking if string starts with one
+ * of the symbols in suffix.
+ *
+ * @param str Pointer to the string.
+ * @param suffix c-style string with
+ * symbols to find.
+ * @return bool
+ * true If one of the symbols of suffix is ends of
+ * string.
+ * false otherwise.
+ */
 bool string_starts_with (const string *str, const char *suffix);
 
+/**
+ * @brief Creating new instance of string from
+ * substring of str. substring is count elements
+ * from offset index.
+ *
+ * @param str Pointer to the string.
+ * @param offset Staring element of substring.
+ * @param count Number of elements in substring.
+ * @return Substing in new string instance.
+ */
 string *string_substr (const string *str, size_t offset, size_t count);
 
 /**

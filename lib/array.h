@@ -225,7 +225,7 @@ array_iterator array_erase (array *arr, array_iterator where,
 /**
  * @brief Erasing elements from <first> to <last>
  * elements (ALL INCLUDED). <first> and <last>
- * have to not be NULL.
+ * have tno to be NULL.
  *
  * @param arr Pointer to array instance.
  * @param first First element to erase.

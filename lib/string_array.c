@@ -8,7 +8,6 @@
 /**
  * @brief Function to increase capacity
  * of the string to str.size + <size>.
- *
  * @param str Pointer to the string.
  * @param size How much capacity is needed.
  */
@@ -40,6 +39,8 @@ string_create_capacity (size_t capacity)
   str->capacity = capacity;
   str->size = 0;
   str->arr = (char *)malloc (sizeof (char) * str->capacity);
+  if (str->capacity > 0)
+    str->arr[0] = '\0';
 
   return str;
 }
@@ -104,9 +105,6 @@ string_append (string *str, const string *app)
 
   size_t len = app->size;
 
-  // Increase capacity if need.
-  __string_increase_capacity (str, len);
-
   // Replacing empty space by app string.
   string_replace_substr (str, app, str->size, 0, len);
 
@@ -126,17 +124,8 @@ string_append_c_str (string *str, const char *c_str)
 
   size_t len = strlen (c_str);
 
-  // Increase capacity if need.
-  __string_increase_capacity (str, len);
-
   // Replacing empty space by app string.
   string_replace_subcstr (str, c_str, str->size, 0, len);
-
-  // changing size.
-  str->size = len + str->size - 1;
-
-  // adding '\0'
-  str->arr[str->size] = '\0';
 
   return str;
 }
@@ -233,34 +222,16 @@ string_iterator string_erase_range (string *str, string_iterator first,
 
 void string_erase_substr (string *str, size_t offset, size_t count);
 
-size_t string_find (const string *str, char c, size_t offset, size_t count);
+ssize_t string_find (const string *str, char c, size_t offset, size_t count);
 
-size_t string_find_any_of (const string *str, const char *charset,
-                           size_t offset, size_t count);
+ssize_t string_find_any_of (const string *str, const char *charset,
+                            size_t offset, size_t count);
 
-size_t string_find_first_not_of (const string *str, char c, size_t offset,
-                                 size_t count);
+ssize_t string_find_first_not_of (const string *str, char c, size_t offset,
+                                  size_t count);
 
-size_t string_find_any_first_not_of (const string *str, const char *charset,
-                                     size_t offset, size_t count);
-
-size_t string_find_first_of (const string *str, char c, size_t offset,
-                             size_t count);
-
-size_t string_find_any_first_of (const string *str, const char *charset,
-                                 size_t offset, size_t count);
-
-size_t string_find_last_not_of (const string *str, char c, size_t offset,
-                                size_t count);
-
-size_t string_find_any_last_not_of (const string *str, const char *charset,
-                                    size_t offset, size_t count);
-
-size_t string_find_last_of (const string *str, char c, size_t offset,
-                            size_t count);
-
-size_t string_find_any_last_of (const string *str, const char *charset,
-                                size_t offset, size_t count);
+ssize_t string_find_any_first_not_of (const string *str, const char *charset,
+                                      size_t offset, size_t count);
 
 char
 string_front (const string *str)
@@ -311,36 +282,44 @@ size_t
 string_replace_substr (string *str, const string *rep, size_t pos,
                        size_t offset, size_t count)
 {
-  if (!str || !rep || pos >= str->size)
+  if (!str || !rep || pos > str->size)
     return 0;
 
-  // Calculating how many symbols will be replaced.
-  // If not enough space, will be replaced only symbols,
-  // that fit into current string.
-  size_t res = str->size - pos >= count ? count : str->size - pos;
+  // Increase capacity if need.
+  if (str->capacity < pos + count)
+    __string_increase_capacity (str, pos + count + 1);
 
-  for (size_t i = 0; i < res; i++)
+  // Replacing symbols.
+  for (size_t i = 0; i < count; i++)
     str->arr[i + pos] = rep->arr[i + offset];
 
-  return res;
+  // Setting updated attributes
+  str->size = pos + count;
+  str->arr[str->size] = '\0';
+
+  return count;
 }
 size_t
 string_replace_subcstr (string *str, const char *rep, size_t pos,
                         size_t offset, size_t count)
 {
   // Conditions to extra return.
-  if (!str || !rep || pos >= str->size)
+  if (!str || !rep || pos > str->size)
     return 0;
 
-  // Calculating how many symbols will be replaced.
-  // If not enough space, will be replaced only symbols,
-  // that fit into current string.
-  size_t res = str->size - pos >= count ? count : str->size - pos;
+  // Increase capacity if need.
+  if (str->capacity < pos + count)
+    __string_increase_capacity (str, pos + count + 1);
 
-  for (size_t i = 0; i < res; i++)
+  // Replacing symbols.
+  for (size_t i = 0; i < count; i++)
     str->arr[i + pos] = rep[i + offset];
 
-  return res;
+  // Setting updated attributes
+  str->size = pos + count;
+  str->arr[str->size] = '\0';
+
+  return count;
 }
 
 size_t string_replace_char (string *str, char c, size_t pos, size_t times);
@@ -351,14 +330,32 @@ size_t string_replace_iter (string *str, string_iterator iter,
 size_t string_replace_iter_char (string *str, string_iterator first,
                                  string_iterator last, char c);
 
-void string_reserve (string *str, size_t count);
+inline void
+string_reserve (string *str, size_t count)
+{
+  __string_increase_capacity (str, str->size + count);
+}
 
-void string_resize (string *str);
+void
+string_resize (string *str, size_t size)
+{
+  if (size > str->size)
+    __string_increase_capacity (str, size - str->size + 1);
+
+  str->size = size;
+  str->arr[str->size] = '\0';
+}
 
 size_t string_rfind (const string *str, char c, size_t offset, size_t count);
 
 size_t string_rfind_any_of (const string *str, const char *charset,
                             size_t offset, size_t count);
+
+ssize_t string_rfind_first_not_of (const string *str, char c, size_t offset,
+                                   size_t count);
+
+ssize_t string_rfind_any_first_not_of (const string *str, const char *charset,
+                                       size_t offset, size_t count);
 
 size_t string_shrink_to_fit (string *str);
 
