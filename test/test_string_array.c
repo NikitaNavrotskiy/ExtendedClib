@@ -149,6 +149,19 @@ START_TEST (string_test_4)
 
   ck_assert (string_rend (str) + 1 == str->arr);
 
+  string_reserve (str, 47);
+  ck_assert_uint_eq (string_capacity (str), 47);
+
+  string_push_back (str, 'S');
+  ck_assert_str_eq (str->arr, "SomethingS");
+
+  string_pop_back (str);
+  ck_assert_str_eq (str->arr, "Something");
+
+  string_clear (str);
+  ck_assert (str->size == 0);
+  ck_assert_str_eq (str->arr, "");
+
   string_destroy (str);
   string_destroy (substr2);
   string_destroy (substr1);

@@ -166,6 +166,9 @@ string_clear (string *str)
 {
   if (!str)
     return;
+
+  if (str->capacity > 0)
+    str->arr[0] = '\0';
   str->size = 0;
 }
 
@@ -353,8 +356,27 @@ string_find_any_of (const string *str, const char *charset, size_t offset,
   return -1;
 }
 
-ssize_t string_find_first_not_of (const string *str, char c, size_t offset,
-                                  size_t count);
+ssize_t
+string_find_first_not_of (const string *str, char c, size_t offset,
+                          size_t count)
+{
+  if (!str)
+    return -1;
+
+  if (offset >= str->size)
+    return -1;
+
+  if (offset + count >= str->size)
+    count = str->size - offset;
+
+  for (size_t i = 0; i < count; i++)
+    {
+      if (str->arr[offset + i] != c)
+        return offset + i;
+    }
+
+  return -1;
+}
 
 ssize_t string_find_any_first_not_of (const string *str, const char *charset,
                                       size_t offset, size_t count);
@@ -403,6 +425,7 @@ string_push_back (string *str, char c)
 
   str->arr[str->size] = c;
   str->size++;
+  str->arr[str->size] = '\0';
 }
 
 inline void
@@ -513,7 +536,12 @@ size_t string_replace_iter_char (string *str, string_iterator first,
 inline void
 string_reserve (string *str, size_t count)
 {
-  __string_increase_capacity (str, str->size + count);
+  if (!str || count < str->capacity)
+    return;
+
+  char *ptr = (char *)realloc (str->arr, count);
+  str->capacity = count;
+  str->arr = ptr;
 }
 
 void
@@ -577,8 +605,27 @@ string_rfind_any_of (const string *str, const char *charset, size_t offset,
   return -1;
 }
 
-ssize_t string_rfind_first_not_of (const string *str, char c, size_t offset,
-                                   size_t count);
+ssize_t
+string_rfind_first_not_of (const string *str, char c, size_t offset,
+                           size_t count)
+{
+  if (!str)
+    return -1;
+
+  if (offset >= str->size)
+    return -1;
+
+  if (offset + count >= str->size)
+    count = str->size - offset;
+
+  for (ssize_t i = count - 1; i >= 0; i--)
+    {
+      if (str->arr[offset + i] != c)
+        return offset + i;
+    }
+
+  return -1;
+}
 
 ssize_t string_rfind_any_first_not_of (const string *str, const char *charset,
                                        size_t offset, size_t count);

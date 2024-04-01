@@ -1,4 +1,5 @@
 #include "queue.h"
+#include <stdbool.h>
 
 ////////////////////////////////////////////////////
 /*      Public API functions of the queue         */
@@ -20,6 +21,9 @@ queue_create (void (*destr) (dptr data))
 inline void
 queue_push (queue *q, constdptr data)
 {
+  if (!q)
+    return;
+
   q->front = __do_node_create (data, q->front, NULL);
 
   /* If Queue wasn't empty => adding reference from former front to the
@@ -35,6 +39,9 @@ queue_push (queue *q, constdptr data)
 void
 queue_pop (queue *q)
 {
+  if (!q || q->size == 0)
+    return;
+
   /* Saving back to free it, but not lose back's references */
   struct qnode *tmp = q->back;
 
@@ -52,33 +59,44 @@ queue_pop (queue *q)
   __do_node_destroy (tmp, q->destr);
 }
 
-inline __attribute__ ((always_inline)) dptr
+inline dptr
 queue_front (const queue *q)
 {
-  return do_node_get (q->front);
+  if (q)
+    return do_node_get (q->front);
+  return NULL;
 }
 
-inline __attribute__ ((always_inline)) dptr
+inline dptr
 queue_back (const queue *q)
 {
-  return do_node_get (q->back);
+  if (q)
+    return do_node_get (q->back);
+  return NULL;
 }
 
-inline __attribute__ ((always_inline)) size_t
+inline size_t
 queue_size (const queue *q)
 {
+  if (!q)
+    return 0;
   return q->size;
 }
 
-inline __attribute__ ((always_inline)) bool
+inline bool
 queue_empty (const queue *q)
 {
+  if (!q)
+    return true;
   return q->size == 0;
 }
 
 void
 queue_destroy (queue *q)
 {
+  if (!q)
+    return;
+
   struct qnode *tmp = q->front;
 
   /* Destroying queue from front one by one.
