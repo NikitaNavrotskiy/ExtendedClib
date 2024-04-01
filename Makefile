@@ -34,10 +34,12 @@ all: clean shared_lib static_lib
 
 static_lib: clean $(OBJ)
 	ar rcs $(NAME).a $(OBJ)
-	
+	strip $(NAME).so
+
 
 shared_lib: clean $(OBJ)
 	$(CC) -shared -fpic -flto -o $(NAME).so $(OBJ)
+	strip $(NAME).so
 
 
 %.o: %.c

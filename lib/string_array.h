@@ -206,20 +206,17 @@ int string_compare_c_str (const string *str, const char *c_str);
  * @param str1 Pointer to the first string.
  * @param offset1 Starting index for comparing
  * for str1.
- * @param count1 Number of symbols for comparing
- * for str1.
  * @param str2 Pointer to the second string.
  * @param offset2 Starting index for comparing
  * for str2.
- * @param count2 Number of symbols for comparing
- * for str2.
+ * @param count Number of symbols for comparing
  * @return int Return
  * (int < 0) if str2 > str1 or str1 is Null,
  * (int > 0) if str2 < str1 or str2 is Null,
  * (int = 0) if str1 = str2.
  */
-int string_compare_substr (const string *str1, size_t offset1, size_t count1,
-                           const string *str2, size_t offset2, size_t count2);
+int string_compare_substr (const string *str1, size_t offset1,
+                           const string *str2, size_t offset2, size_t count);
 
 /**
  * @brief Return new instance that
@@ -397,7 +394,7 @@ void string_pop_back (string *str);
 
 string_iterator string_rbegin (const string *str);
 
-string_iterator string_rend ();
+string_iterator string_rend (const string *str);
 
 size_t string_replace (string *str, const string *rep, size_t pos,
                        size_t count);
@@ -421,8 +418,7 @@ size_t string_replace_iter_char (string *str, string_iterator first,
 
 void string_reserve (string *str, size_t count);
 
-void string_resize (string *str, size_t size);
-
+void string_resize (string *str, char c, size_t size);
 /**
  * @brief Returns index of last found <c> in <str> in
  * range of indexes from <offset> to <offset> + <count> - 1.
@@ -434,7 +430,7 @@ void string_resize (string *str, size_t size);
  * @return Index of last found element or -1 if
  * not found.
  */
-size_t string_rfind (const string *str, char c, size_t offset, size_t count);
+ssize_t string_rfind (const string *str, char c, size_t offset, size_t count);
 
 /**
  * @brief Returns index of last found symbol from
@@ -448,8 +444,8 @@ size_t string_rfind (const string *str, char c, size_t offset, size_t count);
  * @return Index of last found element or -1 if
  * not found.
  */
-size_t string_rfind_any_of (const string *str, const char *charset,
-                            size_t offset, size_t count);
+ssize_t string_rfind_any_of (const string *str, const char *charset,
+                             size_t offset, size_t count);
 
 /**
  * @brief Returns index of last element from that not equal to <c>

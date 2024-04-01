@@ -1,4 +1,5 @@
 #include "string_array.h"
+#include <string.h>
 
 /**
  * @brief Private functions.
@@ -152,20 +153,87 @@ string_c_str (const string *str)
   return (const char *)str->arr;
 }
 
-inline __attribute__ ((always_inline)) size_t
+inline size_t
 string_capacity (const string *str)
 {
+  if (!str)
+    return 0;
   return str->capacity;
 }
 
-void string_clear (string *str);
+void
+string_clear (string *str)
+{
+  if (!str)
+    return;
+  str->size = 0;
+}
 
-int string_compare (const string *str1, const string *str2);
+inline int
+string_compare (const string *str1, const string *str2)
+{
+  if (!str1)
+    {
+      if (!str2)
+        return 0;
+      else
+        return -1;
+    }
 
-int string_compare_c_str (const string *str, const char *c_str);
+  return string_compare_substr (str1, 0, str2, 0, str1->size);
+}
 
-int string_compare_substr (const string *str1, size_t offset1, size_t count1,
-                           const string *str2, size_t offset2, size_t count2);
+inline int
+string_compare_c_str (const string *str, const char *c_str)
+{
+  if (!str)
+    {
+      if (!c_str)
+        return 0;
+      else
+        return -1;
+    }
+  if (!c_str)
+    return 1;
+
+  size_t len = strlen (c_str);
+  size_t cstr_len = len;
+
+  if (str->size < len)
+    len = str->size;
+
+  int res = strncmp (str->arr, c_str, len);
+
+  if (res == 0)
+    return str->size - cstr_len;
+  return res;
+}
+
+int
+string_compare_substr (const string *str1, size_t offset1, const string *str2,
+                       size_t offset2, size_t count)
+{
+  if (!str1)
+    {
+      if (!str2)
+        return 0;
+      else
+        return -1;
+    }
+  if (!str2)
+    return 1;
+
+  if (count > str1->size - offset1)
+    count = str1->size - offset1;
+  if (count > str2->size)
+    count = str2->size - offset2;
+
+  int res = strncmp (str1->arr + offset1, str2->arr + offset2, count);
+
+  if (res == 0)
+    return str1->size - str2->size;
+  return res;
+}
 
 inline string *
 string_copy (const string *str)
@@ -215,17 +283,75 @@ string_end (const string *str)
   return NULL;
 }
 
-bool string_ends_with (const string *str, const char *suffix);
+bool
+string_ends_with (const string *str, const char *suffix)
+{
+  if (!str || str->size == 0)
+    return false;
+
+  size_t len = strlen (suffix);
+
+  for (size_t i = 0; i < len; i++)
+    {
+      if (str->arr[str->size - 1] == suffix[i])
+        return true;
+    }
+
+  return false;
+}
 
 string_iterator string_erase_range (string *str, string_iterator first,
                                     string_iterator last);
 
 void string_erase_substr (string *str, size_t offset, size_t count);
 
-ssize_t string_find (const string *str, char c, size_t offset, size_t count);
+ssize_t
+string_find (const string *str, char c, size_t offset, size_t count)
+{
+  if (!str)
+    return -1;
 
-ssize_t string_find_any_of (const string *str, const char *charset,
-                            size_t offset, size_t count);
+  if (offset >= str->size)
+    return -1;
+
+  if (offset + count >= str->size)
+    count = str->size - offset;
+
+  for (size_t i = 0; i < count; i++)
+    {
+      if (str->arr[offset + i] == c)
+        return offset + i;
+    }
+
+  return -1;
+}
+
+ssize_t
+string_find_any_of (const string *str, const char *charset, size_t offset,
+                    size_t count)
+{
+  if (!str)
+    return -1;
+
+  if (offset >= str->size)
+    return -1;
+
+  if (offset + count >= str->size)
+    count = str->size - offset;
+
+  size_t charset_len = strlen (charset);
+
+  for (size_t i = 0; i < count; i++)
+    {
+      for (size_t j = 0; j < charset_len; j++)
+        {
+          if (str->arr[offset + i] == charset[j])
+            return offset + i;
+        }
+    }
+
+  return -1;
+}
 
 ssize_t string_find_first_not_of (const string *str, char c, size_t offset,
                                   size_t count);
@@ -262,21 +388,59 @@ string_iterator string_insert_iter (string *str, string_iterator iter,
 string_iterator string_insert_iter_char (string *str, string_iterator iter,
                                          char c, size_t count);
 
-size_t string_length (const string *str);
+inline size_t
+string_length (const string *str)
+{
+  if (!str)
+    return 0;
+  return str->size;
+}
 
-void string_push_back (string *str, char c);
+inline void
+string_push_back (string *str, char c)
+{
+  __string_increase_capacity (str, 1);
 
-void string_pop_back (string *str);
+  str->arr[str->size] = c;
+  str->size++;
+}
 
-string_iterator string_rbegin (const string *str);
+inline void
+string_pop_back (string *str)
+{
+  if (!str || str->size == 0)
+    return;
 
-string_iterator string_rend ();
+  str->arr[str->size - 1] = '\0';
+}
 
-size_t string_replace (string *str, const string *rep, size_t pos,
-                       size_t count);
+string_iterator
+string_rbegin (const string *str)
+{
+  if (!str || str->size == 0)
+    return NULL;
+  return str->arr + str->size - 1;
+}
 
-size_t string_replace_c_str (string *str, const char *rep, size_t pos,
-                             size_t count);
+inline string_iterator
+string_rend (const string *str)
+{
+  if (!str)
+    return NULL;
+  return str->arr - 1;
+}
+
+inline size_t
+string_replace (string *str, const string *rep, size_t pos, size_t count)
+{
+  return string_replace_substr (str, rep, pos, 0, count);
+}
+
+inline size_t
+string_replace_c_str (string *str, const char *rep, size_t pos, size_t count)
+{
+  return string_replace_subcstr (str, rep, pos, 0, count);
+}
 
 size_t
 string_replace_substr (string *str, const string *rep, size_t pos,
@@ -286,7 +450,7 @@ string_replace_substr (string *str, const string *rep, size_t pos,
     return 0;
 
   // Increase capacity if need.
-  if (str->capacity < pos + count)
+  if (str->capacity < pos + count + 1)
     __string_increase_capacity (str, pos + count + 1);
 
   // Replacing symbols.
@@ -299,6 +463,7 @@ string_replace_substr (string *str, const string *rep, size_t pos,
 
   return count;
 }
+
 size_t
 string_replace_subcstr (string *str, const char *rep, size_t pos,
                         size_t offset, size_t count)
@@ -308,7 +473,7 @@ string_replace_subcstr (string *str, const char *rep, size_t pos,
     return 0;
 
   // Increase capacity if need.
-  if (str->capacity < pos + count)
+  if (str->capacity < pos + count + 1)
     __string_increase_capacity (str, pos + count + 1);
 
   // Replacing symbols.
@@ -322,7 +487,22 @@ string_replace_subcstr (string *str, const char *rep, size_t pos,
   return count;
 }
 
-size_t string_replace_char (string *str, char c, size_t pos, size_t times);
+size_t
+string_replace_char (string *str, char c, size_t pos, size_t times)
+{
+  if (!str || pos >= str->size)
+    return 0;
+
+  __string_increase_capacity (str, pos + times + 1);
+
+  for (size_t i = 0; i < times; i++)
+    str->arr[i + pos] = c;
+
+  str->size = pos + times;
+  str->arr[str->size] = '\0';
+
+  return times;
+}
 
 size_t string_replace_iter (string *str, string_iterator iter,
                             string_iterator first, string_iterator last);
@@ -337,19 +517,65 @@ string_reserve (string *str, size_t count)
 }
 
 void
-string_resize (string *str, size_t size)
+string_resize (string *str, char c, size_t size)
 {
   if (size > str->size)
-    __string_increase_capacity (str, size - str->size + 1);
+    {
+      __string_increase_capacity (str, size - str->size + 1);
+      memset (str->arr + str->size, c, size - str->size);
+    }
 
   str->size = size;
   str->arr[str->size] = '\0';
 }
 
-size_t string_rfind (const string *str, char c, size_t offset, size_t count);
+ssize_t
+string_rfind (const string *str, char c, size_t offset, size_t count)
+{
+  if (!str)
+    return -1;
 
-size_t string_rfind_any_of (const string *str, const char *charset,
-                            size_t offset, size_t count);
+  if (offset >= str->size)
+    return -1;
+
+  if (offset + count >= str->size)
+    count = str->size - offset;
+
+  for (ssize_t i = count - 1; i >= 0; i--)
+    {
+      if (str->arr[offset + i] == c)
+        return offset + i;
+    }
+
+  return -1;
+}
+
+ssize_t
+string_rfind_any_of (const string *str, const char *charset, size_t offset,
+                     size_t count)
+{
+  if (!str)
+    return -1;
+
+  if (offset >= str->size)
+    return -1;
+
+  if (offset + count >= str->size)
+    count = str->size - offset;
+
+  size_t charset_len = strlen (charset);
+
+  for (ssize_t i = count - 1; i >= 0; i--)
+    {
+      for (size_t j = 0; j < charset_len; j++)
+        {
+          if (str->arr[offset + i] == charset[j])
+            return offset + i;
+        }
+    }
+
+  return -1;
+}
 
 ssize_t string_rfind_first_not_of (const string *str, char c, size_t offset,
                                    size_t count);
@@ -367,9 +593,37 @@ string_size (const string *str)
   return 0;
 }
 
-bool string_starts_with (const string *str, const char *suffix);
+bool
+string_starts_with (const string *str, const char *suffix)
+{
+  if (!str || str->size == 0)
+    return false;
 
-string *string_substr (const string *str, size_t offset, size_t count);
+  size_t len = strlen (suffix);
+
+  for (size_t i = 0; i < len; i++)
+    {
+      if (str->arr[0] == suffix[i])
+        return true;
+    }
+
+  return false;
+}
+
+string *
+string_substr (const string *str, size_t offset, size_t count)
+{
+  if (!str)
+    return NULL;
+
+  if (str->size < offset + count)
+    count = str->size - offset;
+
+  string *new_str = string_create_capacity (count + 1);
+  string_replace_substr (new_str, str, 0, offset, count);
+
+  return new_str;
+}
 
 void
 string_destroy (string *str)
