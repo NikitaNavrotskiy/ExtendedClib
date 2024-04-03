@@ -1,4 +1,4 @@
-/**
+/*j*
  * @file hashmap.h Implementation of Red-black Tree
  */
 
@@ -59,7 +59,7 @@ typedef struct rbtree
    * @brief Pointer to the root of
    * the Red-black Tree.
    */
-  struct rbtree *root;
+  struct __rbt_node *root;
 
   /**
    * @brief Size of the root.
@@ -133,6 +133,15 @@ rbtree_iterator rbtree_begin (const rbtree *tree);
 rbtree_iterator rbtree_rbegin (const rbtree *tree);
 
 /**
+ * @brief Function to delete all nodes,
+ * but does not deallocate memory of
+ * rbtree instanse.
+ *
+ * @param tree Pointer to Red-black Tree.
+ */
+void rbtree_clear (rbtree *tree);
+
+/**
  * @brief Function to check if Red-black Tree contains
  * data.
  *
@@ -181,7 +190,7 @@ rbtree_iterator rbtree_insert (rbtree *tree, constdptr data);
  * @return rbtree_iterator Iterator to the
  * first after the last element.
  */
-rbtree_iterator rbtree_end (rbtree *tree);
+rbtree_iterator rbtree_end ();
 
 /**
  * @brief Function to get iterator to the
@@ -193,7 +202,7 @@ rbtree_iterator rbtree_end (rbtree *tree);
  * first after the last element in reverse
  * order.
  */
-rbtree_iterator rbtree_rend (rbtree *tree);
+rbtree_iterator rbtree_rend ();
 
 /**
  * @brief Function to erase element by
@@ -205,6 +214,15 @@ rbtree_iterator rbtree_rend (rbtree *tree);
  * after erased element.
  */
 rbtree_iterator rbtree_erase (rbtree *tree, rbtree_iterator iter);
+
+/**
+ * @brief Function checks is rbtree is empty.
+ *
+ * @param tree Pointer to Red-black Tree.
+ * @return true if Tree is empty.
+ * false otherwise.
+ */
+bool rbtree_empty (rbtree *tree);
 
 /**
  * @brief Function that finds element by data using
@@ -225,17 +243,6 @@ rbtree_iterator rbtree_find (const rbtree *tree, constdptr data);
  * @param data - data ot the removing element.
  */
 void rbtree_remove (rbtree *tree, constdptr data);
-
-/**
- * @brief Function to remove all occurences
- * of elements by data. If allow_same is false,
- * just removing one element or nothing if no such
- * element.
- *
- * @param tree Pointer to Red-black Tree.
- * @param data - data ot the removing element.
- */
-void rbtree_removeall (rbtree *tree, constdptr data);
 
 /**
  * @brief Function to get number of nodes in
