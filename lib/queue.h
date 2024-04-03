@@ -48,7 +48,8 @@ typedef struct queue
  * @brief Function to create new queue. Allocates the memory. Should be
  * destroyed at the end by calling queue_destroy().
  *
- * @param destr Destructor for data.
+ * @param destr Destructor for data. Null if should not
+ * be freed.
  * @return queue * Pointer to new queue.
  */
 queue *queue_create (void (*destr) (dptr data));

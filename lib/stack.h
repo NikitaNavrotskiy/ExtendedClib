@@ -44,13 +44,16 @@ typedef struct stack
 /**
  * @brief Function to create new stack. Allocates the memory. Should be
  * destroyed at the end.
+ *
  * @param destr Destructor for data.
+ * Null if Should not be freed.
  * @return Pointer to new stack.
  */
 stack *stack_create (void (*destr) (dptr data));
 
 /**
- * @brief Function to push new element to the stack's top..
+ * @brief Function to push new element to the stack's top.
+ * Safety for NULL <s> param.
  *
  * @param s Stack where new element will be placed.
  * @param data Data to push into the stack.
@@ -59,7 +62,8 @@ void stack_push (stack *s, constdptr data);
 
 /**
  * @brief Function to pop top element from the stack.
- * Do not check if stack is empty.
+ * Safety for NULL <s> param and empty stack.
+ *
  * @param s Stack to pop element.
  */
 void stack_pop (stack *s);
@@ -74,6 +78,7 @@ dptr stack_top (const stack *s);
 
 /**
  * @brief Function to get size of stack (number of elements)
+ * Safety for NULL <s> param.
  *
  * @param s Stackto get size from.
  * @return size_t Actual size of stack..
@@ -82,6 +87,7 @@ size_t stack_size (const stack *s);
 
 /**
  * @brief Function to check if stack is empty
+ * Safety for NULL <s> param.
  *
  * @param s Stack to check for emptiness.
  * @return true If stack is empty.
@@ -91,7 +97,8 @@ bool stack_empty (const stack *s);
 
 /**
  * @brief Function to destroy stack. Frees the memory.
- * Not checking that s == nullptr.
+ * Safety for NULL <s> param.
+ *
  * @param s Pointer of the stack to destroy.
  */
 void stack_destroy (stack *s);

@@ -19,6 +19,9 @@ stack_create (void (*destr) (dptr data))
 void
 stack_push (stack *s, constdptr data)
 {
+  if (!s)
+    return;
+
   s->top = __o_node_create (data, s->top);
   s->size++;
 }
@@ -26,6 +29,9 @@ stack_push (stack *s, constdptr data)
 void
 stack_pop (stack *s)
 {
+  if (!s || s->size == 0)
+    return;
+
   /* Save old top to not lose references. */
   struct snode *tmp = s->top;
 
@@ -37,27 +43,38 @@ stack_pop (stack *s)
   __o_node_destroy (tmp, s->destr);
 }
 
-inline __attribute__ ((always_inline)) dptr
+inline dptr
 stack_top (const stack *s)
 {
+  if (!s)
+    return NULL;
   return o_node_get (s->top);
 }
 
-inline __attribute__ ((always_inline)) size_t
+inline size_t
 stack_size (const stack *s)
 {
+  if (!s)
+    return 0;
+
   return s->size;
 }
 
-inline __attribute__ ((always_inline)) bool
+inline bool
 stack_empty (const stack *s)
 {
+  if (!s)
+    return true;
+
   return s->size == 0;
 }
 
 void
 stack_destroy (stack *s)
 {
+  if (!s)
+    return;
+
   /* Destroying stack from the top, one by one.
   tmp is to save references of deleting element. */
   struct snode *tmp = s->top;
