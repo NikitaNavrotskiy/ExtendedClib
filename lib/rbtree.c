@@ -1,8 +1,21 @@
 #include "rbtree.h"
+#include <stdbool.h>
 
 ////////////////////////////////////////////////////
 /*    Private functions of the Red-black Tree     */
 ////////////////////////////////////////////////////
+
+/**
+ * @brief Little swap macro
+ */
+#define __RBNODE_SWAP(a, b)                                                   \
+  do                                                                          \
+    {                                                                         \
+      struct __rbt_node *tmp = a;                                             \
+      a = b;                                                                  \
+      b = tmp;                                                                \
+    }                                                                         \
+  while (0)
 
 /**
  * @brief Function to create rbtree node.
@@ -217,6 +230,120 @@ __rbtree_get_max (struct __rbt_node *root)
   return tmp;
 }
 
+static rbtree_iterator
+__rbtree_balance_on_insert (rbtree *tree, rbtree_iterator nd)
+{
+  struct __rbt_node *parent = nd->parent;
+
+  while (nd != tree->root && parent->is_red)
+    {
+      struct __rbt_node *grandparent = parent->parent;
+
+      if (grandparent->left == parent)
+        {
+          struct __rbt_node *uncle = grandparent->right;
+
+          if (uncle && uncle->is_red)
+            {
+              parent->is_red = false;
+              uncle->is_red = false;
+              grandparent->is_red = true;
+
+              nd = grandparent;
+              parent = nd->parent;
+            }
+          else
+            {
+              if (parent->right == nd)
+                {
+                  __rbtree_left_rotate (tree, parent);
+                  __RBNODE_SWAP (nd, parent);
+                }
+
+              __rbtree_right_rotate (tree, grandparent);
+              grandparent->is_red = true;
+              parent->is_red = false;
+
+              break;
+            }
+        }
+      else
+        {
+          struct __rbt_node *uncle = grandparent->left;
+
+          if (uncle && uncle->is_red)
+            {
+              parent->is_red = false;
+              uncle->is_red = false;
+              grandparent->is_red = true;
+
+              nd = grandparent;
+              parent = nd->parent;
+            }
+          else
+            {
+              if (parent->left == nd)
+                {
+                  __rbtree_right_rotate (tree, parent);
+                  __RBNODE_SWAP (nd, parent);
+                }
+
+              __rbtree_left_rotate (tree, grandparent);
+              grandparent->is_red = true;
+              parent->is_red = false;
+
+              break;
+            }
+        }
+    }
+
+  tree->root->is_red = false;
+
+  return nd;
+}
+
+static rbtree_iterator
+__rbtree_insert_without_balance (rbtree *tree, constdptr data)
+{
+  struct __rbt_node *cur = tree->root, *prev = NULL;
+  bool dont_insert = false;
+
+  while (cur)
+    {
+      prev = cur;
+
+      int cmp_res = tree->cmp (cur->data, data);
+
+      if (cmp_res < 0)
+        cur = cur->right;
+      else if (cmp_res > 0)
+        cur = cur->left;
+      else if (!tree->allow_same)
+        {
+          dont_insert = true;
+          break;
+        }
+    }
+
+  if (!dont_insert)
+    {
+      struct __rbt_node *new_node
+          = __rbt_node_create (data, NULL, NULL, prev, true);
+
+      if (prev)
+        {
+          if (tree->cmp (new_node->data, prev->data) < 0)
+            prev->left = new_node;
+          else
+            prev->right = new_node;
+        }
+
+      return new_node;
+    }
+
+  return NULL;
+}
+
 ////////////////////////////////////////////////////
 /*   Public API functions of the Red-black Tree    */
 ////////////////////////////////////////////////////
@@ -281,7 +408,22 @@ rbtree_destoy (rbtree *tree)
   free (tree);
 }
 
-rbtree_iterator rbtree_insert (rbtree *tree, constdptr data);
+rbtree_iterator
+rbtree_insert (rbtree *tree, constdptr data)
+{
+  if (!tree)
+    return NULL;
+
+  rbtree_iterator inserted_node = __rbtree_insert_without_balance (tree, data);
+
+  if (inserted_node)
+    {
+      inserted_node = __rbtree_balance_on_insert (tree, inserted_node);
+      tree->size++;
+    }
+
+  return inserted_node;
+}
 
 inline rbtree_iterator
 rbtree_end ()
