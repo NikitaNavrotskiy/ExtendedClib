@@ -12,12 +12,19 @@ run_one_test (Suite *test)
 void
 run_tests ()
 {
-  Suite *list[] = { suite_queue (),          suite_stack (),
-                    suite_list (),           suite_forward_list (),
-                    suite_array (),          suite_hashmap (),
-                    suite_hashset (),        suite_bitset (),
-                    suite_string_array (),   suite_linear_allocator (),
-                    suite_pool_allocator (), NULL };
+  Suite *list[] = { suite_queue (),
+                    suite_stack (),
+                    suite_list (),
+                    suite_forward_list (),
+                    suite_array (),
+                    suite_hashmap (),
+                    suite_hashset (),
+                    suite_bitset (),
+                    suite_string_array (),
+                    suite_linear_allocator (),
+                    suite_pool_allocator (),
+                    suite_std_allocator (),
+                    NULL };
 
   for (Suite **cur = list; *cur; cur++)
     run_one_test (*cur);

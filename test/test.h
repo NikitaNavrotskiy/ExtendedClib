@@ -18,6 +18,7 @@
 
 #include "../lib/linear_allocator.h"
 #include "../lib/pool_allocator.h"
+#include "../lib/std_allocator.h"
 
 Suite *suite_queue ();
 Suite *suite_stack ();
@@ -32,5 +33,6 @@ Suite *suite_string_array ();
 
 Suite *suite_linear_allocator ();
 Suite *suite_pool_allocator ();
+Suite *suite_std_allocator ();
 
 #endif
