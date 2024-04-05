@@ -118,8 +118,8 @@ __rbtree_left_rotate (rbtree *tree, struct __rbt_node *root)
 
   // If new right child of root is not null,
   // Making reference to his new parent.
-  if (root->right)
-    root->right->parent = root;
+  if (right_child->left)
+    right_child->left->parent = root;
 
   // changing parent of right subtree.
   right_child->parent = root->parent;
@@ -155,15 +155,15 @@ static void
 __rbtree_right_rotate (rbtree *tree, struct __rbt_node *root)
 {
   // Saving reference to left child of local root.
-  struct __rbt_node *left_child = root->right;
+  struct __rbt_node *left_child = root->left;
 
   // Moving new left child for the root.
   root->left = left_child->right;
 
   // If new left child of root is not null,
   // Making reference to his new parent.
-  if (root->left)
-    root->left->parent = root;
+  if (left_child->right)
+    left_child->right->parent = root;
 
   // changing parent of left subtree.
   left_child->parent = root->parent;
@@ -175,9 +175,9 @@ __rbtree_right_rotate (rbtree *tree, struct __rbt_node *root)
   if (root->parent)
     {
       if (root->parent->right == root)
-        root->parent->left = left_child;
-      else
         root->parent->right = left_child;
+      else
+        root->parent->left = left_child;
     }
   else
     tree->root = left_child;
@@ -336,6 +336,10 @@ __rbtree_insert_without_balance (rbtree *tree, constdptr data)
             prev->left = new_node;
           else
             prev->right = new_node;
+        }
+      else
+        {
+          tree->root = new_node;
         }
 
       return new_node;

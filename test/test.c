@@ -20,6 +20,7 @@ run_tests ()
                     suite_hashmap (),
                     suite_hashset (),
                     suite_bitset (),
+                    suite_rbtree (),
                     suite_string_array (),
                     suite_linear_allocator (),
                     suite_pool_allocator (),

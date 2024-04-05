@@ -17,6 +17,16 @@
 #include "types.h"
 
 /**
+ * @brief Mactor to check if this type of allocator can
+ * be used with containers. It will be assert this macro
+ * by assert(_CONTAINER_[Allocator prefix]_ALLOCATOR)
+ */
+#ifndef _CONTAINER_std_ALLOCATOR
+#define _CONTAINER_std_ALLOCATOR
+
+#endif // _CONTAINER_std_ALLOCATOR
+
+/**
  * @struct std_allocator
  * @brief Implemenation of std_allocator.
  * Just wrapper around malloc, free (mmap, munmap).
