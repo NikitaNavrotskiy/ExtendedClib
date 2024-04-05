@@ -46,6 +46,11 @@ START_TEST (rbtree_test_1)
   ck_assert (tree->root->right->right->right->is_red == true);
   ck_assert (tree->root->right->right->right->data == arr + 7);
 
+  for (int i = 0; i < 9; i++)
+    {
+      rbtree_remove (tree, arr + i);
+    }
+
   rbtree_destoy (tree);
 }
 

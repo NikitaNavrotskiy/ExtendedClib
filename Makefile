@@ -7,7 +7,7 @@ CFLAGS=-Werror -Wall -Wextra -O3 -march=native
 
 HEADERS=lib/string_array.h lib/queue.h lib/types.h lib/stack.h lib/list.h  \
 	lib/forward_list.h lib/array.h lib/hash.h lib/hashmap.h lib/hashset.h \
-	lib/bitset.h rbtree.h				   \
+	lib/bitset.h lib/rbtree.h				   \
 	lib/std_allocator.h lib/linear_allocator.h lib/pool_allocator.h
 
 SRC=lib/string_array.c lib/types.c lib/queue.c lib/stack.c lib/list.c \

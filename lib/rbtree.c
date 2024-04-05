@@ -6,7 +6,7 @@
 ////////////////////////////////////////////////////
 
 /**
- * @brief Little swap macro
+ * @brief Little swap macroses
  */
 #define __RBNODE_SWAP(a, b)                                                   \
   do                                                                          \
@@ -16,6 +16,17 @@
       b = tmp;                                                                \
     }                                                                         \
   while (0)
+
+#define __RBNODE_VALUES_SWAP(a, b)                                            \
+  do                                                                          \
+    {                                                                         \
+      dptr tmp = a->data;                                                     \
+      a->data = b->data;                                                      \
+      b->data = tmp;                                                          \
+    }                                                                         \
+  while (0)
+
+static void __rbtree_balance_on_erase (rbtree *tree, struct __rbt_node *del);
 
 /**
  * @brief Function to create rbtree node.
@@ -348,6 +359,159 @@ __rbtree_insert_without_balance (rbtree *tree, constdptr data)
   return NULL;
 }
 
+static void
+__rbtree_balance_on_erase_left (rbtree *tree, struct __rbt_node *del)
+{
+  struct __rbt_node *parent = del->parent;
+  struct __rbt_node *sibling = parent->right;
+
+  if (sibling->is_red)
+    {
+      parent->is_red = true;
+      sibling->is_red = false;
+      __rbtree_left_rotate (tree, parent);
+    }
+
+  if (!sibling->right || !sibling->right->is_red)
+    {
+      if (!sibling->left || !sibling->left->is_red)
+        {
+          bool is_red_parent = parent->is_red;
+          sibling->is_red = true;
+          parent->is_red = false;
+
+          if (is_red_parent)
+            return;
+          else
+            __rbtree_balance_on_erase (tree, parent);
+        }
+      sibling->left->is_red = false;
+      sibling->is_red = true;
+      __rbtree_right_rotate (tree, sibling);
+    }
+
+  if (sibling->right && sibling->right->is_red)
+    {
+      sibling->right->is_red = false;
+      sibling->is_red = parent->is_red;
+      parent->is_red = false;
+      __rbtree_left_rotate (tree, parent);
+      return;
+    }
+}
+
+static void
+__rbtree_balance_on_erase_right (rbtree *tree, struct __rbt_node *del)
+{
+  struct __rbt_node *parent = del->parent;
+  struct __rbt_node *sibling = parent->left;
+
+  if (sibling->is_red)
+    {
+      parent->is_red = true;
+      sibling->is_red = false;
+      __rbtree_right_rotate (tree, parent);
+    }
+
+  if (!sibling->left || !sibling->left->is_red)
+    {
+      if (!sibling->right || !sibling->right->is_red)
+        {
+          bool is_red_parent = parent->is_red;
+          sibling->is_red = true;
+          parent->is_red = false;
+
+          if (is_red_parent)
+            return;
+          else
+            __rbtree_balance_on_erase (tree, parent);
+        }
+      sibling->right->is_red = false;
+      sibling->is_red = true;
+      __rbtree_left_rotate (tree, sibling);
+    }
+
+  if (sibling->left && sibling->left->is_red)
+    {
+      sibling->left->is_red = false;
+      sibling->is_red = parent->is_red;
+      parent->is_red = false;
+      __rbtree_right_rotate (tree, parent);
+      return;
+    }
+}
+
+void
+__rbtree_balance_on_erase (rbtree *tree, struct __rbt_node *del)
+{
+  if (del == tree->root || del->is_red)
+    return;
+
+  if (del->parent->left == del)
+    __rbtree_balance_on_erase_left (tree, del);
+  else
+    __rbtree_balance_on_erase_right (tree, del);
+}
+
+static rbtree_iterator
+__rbtree_erase_handler (rbtree *tree, rbtree_iterator iter)
+{
+  rbtree_iterator res
+      = iter->right != NULL ? __rbtree_get_min (iter->right) : iter->parent;
+
+  struct __rbt_node *replace = NULL;
+
+  if (iter->right && iter->left)
+    {
+      replace = __rbtree_get_min (iter->left);
+      __RBNODE_VALUES_SWAP (iter, replace);
+    }
+  else if (iter->right && iter->is_red == false)
+    {
+      replace = iter->right;
+      __RBNODE_VALUES_SWAP (iter, replace);
+    }
+  else if (iter->left && iter->is_red)
+    {
+      replace = iter->left;
+      __RBNODE_VALUES_SWAP (iter, replace);
+    }
+  else
+    replace = iter;
+
+  if (replace->is_red)
+    {
+      if (replace->right == NULL && replace->left == NULL)
+        {
+          if (replace->parent)
+            {
+              if (replace->parent->left == replace)
+                replace->parent->left = NULL;
+              else if (replace->parent->right == replace)
+                replace->parent->right = NULL;
+            }
+          __rbt_node_destoy (replace->data, tree->destr);
+        }
+    }
+  else
+    {
+      if (replace->parent)
+        {
+          if (replace->parent->left == replace)
+            replace->parent->left = NULL;
+          else if (replace->parent->right == replace)
+            replace->parent->right = NULL;
+        }
+
+      __rbtree_balance_on_erase (tree, replace);
+
+      __rbt_node_destoy (replace->data, tree->destr);
+    }
+  tree->size--;
+
+  return res;
+}
+
 ////////////////////////////////////////////////////
 /*   Public API functions of the Red-black Tree    */
 ////////////////////////////////////////////////////
@@ -441,7 +605,13 @@ rbtree_rend ()
   return NULL;
 }
 
-rbtree_iterator rbtree_erase (rbtree *tree, rbtree_iterator iter);
+rbtree_iterator
+rbtree_erase (rbtree *tree, rbtree_iterator iter)
+{
+  if (!tree || !iter)
+    return NULL;
+  return __rbtree_erase_handler (tree, iter);
+}
 
 inline bool
 rbtree_empty (rbtree *tree)
@@ -453,11 +623,15 @@ inline rbtree_iterator
 rbtree_find (const rbtree *tree, constdptr data)
 {
   if (!tree)
-    return false;
+    return NULL;
   return __rbtree_recursive_find (tree, tree->root, data);
 }
 
-void rbtree_remove (rbtree *tree, constdptr data);
+inline void
+rbtree_remove (rbtree *tree, constdptr data)
+{
+  rbtree_erase (tree, rbtree_find (tree, data));
+}
 
 inline size_t
 rbtree_size (const rbtree *tree)
