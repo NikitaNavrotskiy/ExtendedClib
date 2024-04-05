@@ -1,5 +1,4 @@
 #include "rbtree.h"
-#include <stdbool.h>
 
 ////////////////////////////////////////////////////
 /*    Private functions of the Red-black Tree     */
@@ -60,7 +59,7 @@ __rbt_node_create (constdptr data, dptr left, dptr right, dptr parent,
  * @param destr - Destructor function.
  */
 inline static void
-__rbt_node_destoy (struct __rbt_node *nd, void (*destr) (dptr data))
+__rbt_node_destroy (struct __rbt_node *nd, void (*destr) (dptr data))
 {
   if (destr)
     destr (nd->data);
@@ -82,7 +81,7 @@ __rbtree_recursive_destroy (struct __rbt_node *root, void (*destr) (dptr data))
   __rbtree_recursive_destroy (root->left, destr);
   __rbtree_recursive_destroy (root->right, destr);
 
-  __rbt_node_destoy (root, destr);
+  __rbt_node_destroy (root, destr);
 }
 
 /**
@@ -334,6 +333,8 @@ __rbtree_insert_without_balance (rbtree *tree, constdptr data)
           dont_insert = true;
           break;
         }
+      else
+        cur = cur->right;
     }
 
   if (!dont_insert)
@@ -370,6 +371,8 @@ __rbtree_balance_on_erase_left (rbtree *tree, struct __rbt_node *del)
       parent->is_red = true;
       sibling->is_red = false;
       __rbtree_left_rotate (tree, parent);
+      parent = sibling->left;
+      sibling = parent->right;
     }
 
   if (!sibling->right || !sibling->right->is_red)
@@ -382,8 +385,9 @@ __rbtree_balance_on_erase_left (rbtree *tree, struct __rbt_node *del)
 
           if (is_red_parent)
             return;
-          else
-            __rbtree_balance_on_erase (tree, parent);
+
+          __rbtree_balance_on_erase (tree, parent);
+          return;
         }
       sibling->left->is_red = false;
       sibling->is_red = true;
@@ -411,6 +415,8 @@ __rbtree_balance_on_erase_right (rbtree *tree, struct __rbt_node *del)
       parent->is_red = true;
       sibling->is_red = false;
       __rbtree_right_rotate (tree, parent);
+      parent = sibling->right;
+      sibling = parent->left;
     }
 
   if (!sibling->left || !sibling->left->is_red)
@@ -423,8 +429,9 @@ __rbtree_balance_on_erase_right (rbtree *tree, struct __rbt_node *del)
 
           if (is_red_parent)
             return;
-          else
-            __rbtree_balance_on_erase (tree, parent);
+
+          __rbtree_balance_on_erase (tree, parent);
+          return;
         }
       sibling->right->is_red = false;
       sibling->is_red = true;
@@ -444,13 +451,24 @@ __rbtree_balance_on_erase_right (rbtree *tree, struct __rbt_node *del)
 void
 __rbtree_balance_on_erase (rbtree *tree, struct __rbt_node *del)
 {
-  if (del == tree->root || del->is_red)
+  if (del->is_red || del == tree->root)
     return;
 
-  if (del->parent->left == del)
-    __rbtree_balance_on_erase_left (tree, del);
-  else
-    __rbtree_balance_on_erase_right (tree, del);
+  if (del->parent)
+    {
+      if (del->parent->left == del)
+        {
+          del->parent->left = NULL;
+          __rbtree_balance_on_erase_left (tree, del);
+        }
+      else if (del->parent->right == del)
+        {
+          del->parent->right = NULL;
+          __rbtree_balance_on_erase_right (tree, del);
+        }
+    }
+
+  __rbt_node_destroy (del, tree->destr);
 }
 
 static rbtree_iterator
@@ -466,12 +484,12 @@ __rbtree_erase_handler (rbtree *tree, rbtree_iterator iter)
       replace = __rbtree_get_min (iter->left);
       __RBNODE_VALUES_SWAP (iter, replace);
     }
-  else if (iter->right && iter->is_red == false)
+  else if (iter->right && iter->right->is_red)
     {
       replace = iter->right;
       __RBNODE_VALUES_SWAP (iter, replace);
     }
-  else if (iter->left && iter->is_red)
+  else if (iter->left && iter->left->is_red)
     {
       replace = iter->left;
       __RBNODE_VALUES_SWAP (iter, replace);
@@ -490,22 +508,18 @@ __rbtree_erase_handler (rbtree *tree, rbtree_iterator iter)
               else if (replace->parent->right == replace)
                 replace->parent->right = NULL;
             }
-          __rbt_node_destoy (replace->data, tree->destr);
+          __rbt_node_destroy (replace, tree->destr);
         }
     }
   else
     {
-      if (replace->parent)
+      if (replace == tree->root)
         {
-          if (replace->parent->left == replace)
-            replace->parent->left = NULL;
-          else if (replace->parent->right == replace)
-            replace->parent->right = NULL;
+          tree->root = NULL;
+          __rbt_node_destroy (replace, tree->destr);
         }
-
-      __rbtree_balance_on_erase (tree, replace);
-
-      __rbt_node_destoy (replace->data, tree->destr);
+      else
+        __rbtree_balance_on_erase (tree, replace);
     }
   tree->size--;
 
@@ -568,7 +582,7 @@ rbtree_contains (const rbtree *tree, constdptr data)
 size_t rbtree_count (const rbtree *tree, constdptr data);
 
 inline void
-rbtree_destoy (rbtree *tree)
+rbtree_destroy (rbtree *tree)
 {
   if (tree)
     __rbtree_recursive_destroy (tree->root, tree->destr);

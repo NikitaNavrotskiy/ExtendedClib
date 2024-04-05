@@ -168,7 +168,7 @@ size_t rbtree_count (const rbtree *tree, constdptr data);
  *
  * @param tree Pointer to Red-black Tree.
  */
-void rbtree_destoy (rbtree *tree);
+void rbtree_destroy (rbtree *tree);
 
 /**
  * @brief Function to insert new data to

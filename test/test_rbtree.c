@@ -51,7 +51,7 @@ START_TEST (rbtree_test_1)
       rbtree_remove (tree, arr + i);
     }
 
-  rbtree_destoy (tree);
+  rbtree_destroy (tree);
 }
 
 START_TEST (rbtree_test_2)
@@ -92,7 +92,10 @@ START_TEST (rbtree_test_2)
   ck_assert (tree->root->left->left->right->is_red == true);
   ck_assert (tree->root->left->left->right->data == arr + 2);
 
-  rbtree_destoy (tree);
+  for (int i = 8; i >= 0; i--)
+    rbtree_remove (tree, arr + i);
+
+  rbtree_destroy (tree);
 }
 
 Suite *
