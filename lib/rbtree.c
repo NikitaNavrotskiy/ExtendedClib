@@ -80,6 +80,18 @@ __rbtree_is_root_black (struct __rbt_node *root)
 }
 
 bool
+__rbtree_is_bst (rbtree *tree, struct __rbt_node *root)
+{
+  if (!root)
+    return true;
+
+  return ((!root->left || tree->cmp (root->data, root->left->data) >= 0)
+          && (!root->right || tree->cmp (root->data, root->right->data) <= 0))
+         && __rbtree_is_bst (tree, root->left)
+         && __rbtree_is_bst (tree, root->right);
+}
+
+bool
 __rbtree_is_no_red_red (struct __rbt_node *root)
 {
   if (!root)
@@ -132,7 +144,8 @@ __rbtree_is_correct (rbtree *tree)
 
   return __rbtree_is_black_height_same (tree->root)
          && __rbtree_is_no_red_red (tree->root)
-         && __rbtree_is_root_black (tree->root);
+         && __rbtree_is_root_black (tree->root)
+         && __rbtree_is_bst (tree, tree->root);
 }
 
 #endif // DEBUG
@@ -754,7 +767,17 @@ rbtree_next (const_rbtree_iterator iter)
 
   if (iter->right)
     return __rbtree_get_min (iter->right);
-  return iter->parent;
+
+  rbtree_iterator parent = iter->parent;
+  rbtree_iterator cur = (rbtree_iterator)iter;
+
+  while (parent && cur == parent->right)
+    {
+      cur = parent;
+      parent = parent->parent;
+    }
+
+  return parent;
 }
 
 rbtree_iterator
@@ -765,5 +788,15 @@ rbtree_prev (const_rbtree_iterator iter)
 
   if (iter->left)
     return __rbtree_get_max (iter->left);
-  return iter->parent;
+
+  rbtree_iterator parent = iter->parent;
+  rbtree_iterator cur = (rbtree_iterator)iter;
+
+  while (parent && cur == parent->left)
+    {
+      cur = parent;
+      parent = parent->parent;
+    }
+
+  return parent;
 }
