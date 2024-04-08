@@ -1,13 +1,18 @@
 #include "test.h"
 #include <check.h>
 #include <stdbool.h>
+#include <strings.h>
 
 bool
-__rbtree_is_root_black (struct __rbt_node *root)
+__rbtree_is_bst (rbtree *tree, struct __rbt_node *root)
 {
   if (!root)
     return true;
-  return root->is_red == false;
+
+  return ((!root->left || tree->cmp (root->data, root->left->data) >= 0)
+          && (!root->right || tree->cmp (root->data, root->right->data) <= 0))
+         && __rbtree_is_bst (tree, root->left)
+         && __rbtree_is_bst (tree, root->right);
 }
 
 bool
@@ -61,15 +66,22 @@ __rbtree_is_correct (rbtree *tree)
   if (!tree->root)
     return true;
 
-  return __rbtree_is_black_height_same (tree->root)
+  return (!tree->root || !tree->root->is_red)
+         && __rbtree_is_black_height_same (tree->root)
          && __rbtree_is_no_red_red (tree->root)
-         && __rbtree_is_root_black (tree->root);
+         && __rbtree_is_bst (tree, tree->root);
 }
 
 static int
 cmp (constdptr first, constdptr second)
 {
   return *(int *)first - *(int *)second;
+}
+
+static void
+destr (dptr data)
+{
+  data = data;
 }
 
 START_TEST (rbtree_test_1)
@@ -194,29 +206,113 @@ START_TEST (rbtree_test_3)
           rbtree_insert (tree, arr + i);
           ck_assert (__rbtree_is_correct (tree));
           ck_assert (rbtree_contains (tree, arr + i));
+          ck_assert (rbtree_size (tree) == (size_t)i + 1);
         }
-
-      int prev = -1;
+      rbtree_iterator prev = rbtree_begin (tree);
       for (rbtree_iterator beg = rbtree_begin (tree); beg != rbtree_end ();
            beg = rbtree_next (beg))
         {
-          ck_assert_int_le (prev, *(int *)(beg->data));
-          prev = *(int *)beg->data;
+          ck_assert (tree->cmp (prev->data, beg->data) <= 0);
+          prev = beg;
         }
-      prev = *(int *)rbtree_rbegin (tree);
+
+      prev = rbtree_rbegin (tree);
       for (rbtree_iterator beg = rbtree_rbegin (tree); beg != rbtree_rend ();
            beg = rbtree_prev (beg))
         {
-          ck_assert_int_ge (prev, *(int *)(beg->data));
-          prev = *(int *)beg->data;
+          ck_assert (tree->cmp (prev->data, beg->data) >= 0);
+          prev = beg;
         }
 
+      size_t count = rbtree_size (tree);
       while (tree->root)
         {
-          rbtree_remove (tree, arr + (rand () % 100));
+          int index = rand () % 100;
+          rbtree_iterator tmp = rbtree_find (tree, arr + index);
+
+          if (tmp)
+            {
+              rbtree_remove (tree, arr + index);
+              ck_assert (tree->size == count - 1);
+              count = tree->size;
+            }
           ck_assert (__rbtree_is_correct (tree));
         }
     }
+
+  rbtree_destroy (tree);
+}
+
+START_TEST (rbtree_test_4)
+{
+  rbtree *tree = rbtree_create (cmp, destr, true);
+  int arr[100];
+
+  for (int j = 0; j < 20; j++)
+    {
+      for (int i = 0; i < 100; i++)
+        {
+          int randint = rand () % 100;
+          arr[i] = randint;
+        }
+
+      for (int i = 0; i < 100; i++)
+        {
+          rbtree_insert (tree, arr + i);
+          ck_assert (__rbtree_is_correct (tree));
+          ck_assert (rbtree_contains (tree, arr + i));
+          ck_assert (rbtree_size (tree) == (size_t)i + 1);
+        }
+      rbtree_iterator prev = rbtree_begin (tree);
+      for (rbtree_iterator beg = rbtree_begin (tree); beg != rbtree_end ();
+           beg = rbtree_next (beg))
+        {
+          ck_assert (tree->cmp (prev->data, beg->data) <= 0);
+          prev = beg;
+        }
+
+      prev = rbtree_rbegin (tree);
+      for (rbtree_iterator beg = rbtree_rbegin (tree); beg != rbtree_rend ();
+           beg = rbtree_prev (beg))
+        {
+          ck_assert (tree->cmp (prev->data, beg->data) >= 0);
+          prev = beg;
+        }
+
+      size_t count = rbtree_size (tree);
+      while (tree->root)
+        {
+          int index = rand () % 100;
+          rbtree_iterator tmp = rbtree_find (tree, arr + index);
+
+          if (tmp)
+            {
+              rbtree_remove (tree, arr + index);
+              ck_assert (tree->size == count - 1);
+              count = tree->size;
+            }
+          ck_assert (__rbtree_is_correct (tree));
+        }
+    }
+
+  rbtree_destroy (tree);
+}
+
+START_TEST (rbtree_test_5)
+{
+  rbtree *tree = rbtree_create (cmp, destr, false);
+
+  int arr[9] = { 2, 1, 3, 4, 5, 6, 7, 8, 9 };
+
+  for (int i = 8; i >= 0; i--)
+    {
+      rbtree_insert (tree, arr + i);
+      ck_assert (__rbtree_is_correct (tree));
+    }
+
+  rbtree_clear (tree);
+  ck_assert (tree->size == 0);
+  ck_assert (rbtree_empty (tree));
 
   rbtree_destroy (tree);
 }
@@ -233,6 +329,8 @@ suite_rbtree ()
   tcase_add_test (tc, rbtree_test_1);
   tcase_add_test (tc, rbtree_test_2);
   tcase_add_test (tc, rbtree_test_3);
+  tcase_add_test (tc, rbtree_test_4);
+  tcase_add_test (tc, rbtree_test_5);
 
   suite_add_tcase (s, tc);
 
