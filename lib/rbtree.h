@@ -91,6 +91,11 @@ typedef struct rbtree
   bool allow_same;
 } rbtree;
 
+// Debug function
+#ifdef DEBUG
+bool __rbtree_is_correct (rbtree *tree);
+#endif // DEBUG
+
 ////////////////////////////////////////////////////
 /*  Public API functions of the Red-black Tree    */
 ////////////////////////////////////////////////////
