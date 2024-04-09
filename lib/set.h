@@ -1,5 +1,6 @@
 /**
- * @file set.h Implementation of set based
+ * @file set.h
+ * @brief Implementation of set based
  * on Red-Black Tree.
  */
 

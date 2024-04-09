@@ -1,7 +1,5 @@
 #include "test.h"
-#include <check.h>
 #include <stdbool.h>
-#include <strings.h>
 
 bool
 __rbtree_is_bst (rbtree *tree, struct __rbt_node *root)
@@ -300,16 +298,21 @@ START_TEST (rbtree_test_4)
 
 START_TEST (rbtree_test_5)
 {
-  rbtree *tree = rbtree_create (cmp, destr, false);
+  int d = 322;
+  rbtree *tree = rbtree_create (cmp, destr, true);
 
-  int arr[9] = { 2, 1, 3, 4, 5, 6, 7, 8, 9 };
+  int arr[10] = { 2, 1, 3, 4, 5, 6, 7, 8, 9, 9 };
 
-  for (int i = 8; i >= 0; i--)
+  for (int i = 9; i >= 0; i--)
     {
       rbtree_insert (tree, arr + i);
       ck_assert (__rbtree_is_correct (tree));
     }
 
+  ck_assert (rbtree_count (tree, &d) == 0);
+  for (int i = 0; i < 8; i++)
+    ck_assert (rbtree_count (tree, arr + i) == 1);
+  ck_assert (rbtree_count (tree, arr + 9) == 2);
   rbtree_clear (tree);
   ck_assert (tree->size == 0);
   ck_assert (rbtree_empty (tree));

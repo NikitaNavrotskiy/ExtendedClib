@@ -7,12 +7,12 @@ CFLAGS=-Werror -Wall -Wextra -O3 -march=native
 
 HEADERS=lib/string_array.h lib/queue.h lib/types.h lib/stack.h lib/list.h  \
 	lib/forward_list.h lib/array.h lib/hash.h lib/hashmap.h lib/hashset.h \
-	lib/bitset.h lib/rbtree.h				   \
+	lib/bitset.h lib/rbtree.h lib/set.h                                  \
 	lib/std_allocator.h lib/linear_allocator.h lib/pool_allocator.h
 
 SRC=lib/string_array.c lib/types.c lib/queue.c lib/stack.c lib/list.c \
 	lib/forward_list.c lib/array.c lib/hash.c lib/hashmap.c lib/hashset.c \
-	lib/bitset.c lib/rbtree.c                               			\
+	lib/bitset.c lib/rbtree.c lib/set.c                                   \
 	lib/std_allocator.c lib/linear_allocator.c lib/pool_allocator.c
 	
 OBJ=$(SRC:.c=.o)
@@ -21,7 +21,7 @@ OBJ=$(SRC:.c=.o)
 TEST_HEADERS=test/test.h
 TEST_SRC=$(SRC) test/test.c test/test_queue.c test/test_stack.c test/test_list.c \
 	test/test_forward_list.c test/test_array.c test/test_hashmap.c test/test_hashset.c \
-	test/test_bitset.c test/test_string_array.c test/test_rbtree.c 											\
+	test/test_bitset.c test/test_string_array.c test/test_rbtree.c test/test_set.c   \
 	test/test_linear_allocator.c test/test_pool_allocator.c test/test_std_allocator.c
 
 TEST_FLAGS=-lcheck -lm
@@ -34,7 +34,7 @@ all: clean shared_lib static_lib
 
 static_lib: clean $(OBJ)
 	ar rcs $(NAME).a $(OBJ)
-	strip $(NAME).so
+	strip $(NAME).a
 
 
 shared_lib: clean $(OBJ)

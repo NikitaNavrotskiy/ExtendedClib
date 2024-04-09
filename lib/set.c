@@ -1,6 +1,10 @@
 #include "set.h"
 #include "rbtree.h"
 
+////////////////////////////////////////////////////
+/*       Public API functions of the Set          */
+////////////////////////////////////////////////////
+
 set *
 set_create (int (*cmp) (constdptr first, constdptr second),
             void (*destr) (dptr data))
@@ -44,7 +48,14 @@ set_contains (const set *st, constdptr data)
   return rbtree_contains (st->tree, data);
 }
 
-size_t set_count (const set *st, constdptr data);
+size_t
+set_count (const set *st, constdptr data)
+{
+  if (!st)
+    return 0;
+
+  return rbtree_count (st->tree, data);
+}
 
 inline void
 set_destroy (set *st)
@@ -92,7 +103,7 @@ set_empty (set *st)
   if (!st)
     return true;
 
-  return false;
+  return rbtree_empty (st->tree);
 }
 
 inline set_iterator

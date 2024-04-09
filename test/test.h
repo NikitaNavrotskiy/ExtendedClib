@@ -13,6 +13,7 @@
 #include "../lib/list.h"
 #include "../lib/queue.h"
 #include "../lib/rbtree.h"
+#include "../lib/set.h"
 #include "../lib/stack.h"
 
 #include "../lib/string_array.h"
@@ -30,6 +31,7 @@ Suite *suite_hashmap ();
 Suite *suite_hashset ();
 Suite *suite_bitset ();
 Suite *suite_rbtree ();
+Suite *suite_set ();
 
 Suite *suite_string_array ();
 

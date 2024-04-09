@@ -71,6 +71,14 @@ __rbt_node_destroy (struct __rbt_node *nd, void (*destr) (dptr data))
 
 #ifdef DEBUG
 
+/**
+ * @brief Function to check that
+ * the root is black.
+ *
+ * @param root Root of Red-black Tree.
+ * @return bool true if root is black,
+ * false otherwise.
+ */
 bool
 __rbtree_is_root_black (struct __rbt_node *root)
 {
@@ -79,6 +87,17 @@ __rbtree_is_root_black (struct __rbt_node *root)
   return root->is_red == false;
 }
 
+/**
+ * @brief Function to check that
+ * Tree is Binary Search Tree (left subtree
+ * <= parent <= right subtree ).
+ *
+ * @param tree Red-black instanse.
+ * @param root Root of Red-black Subtree.
+ * @return bool true if tree is Binary
+ * Search Tree,
+ * false otherwise.
+ */
 bool
 __rbtree_is_bst (rbtree *tree, struct __rbt_node *root)
 {
@@ -91,6 +110,16 @@ __rbtree_is_bst (rbtree *tree, struct __rbt_node *root)
          && __rbtree_is_bst (tree, root->right);
 }
 
+/**
+ * @brief Function to check that
+ * there is no red parent and red
+ * child cases.
+ *
+ * @param root Root of Red-black Tree.
+ * @return bool true if there is no
+ * red parent and red child cases,
+ * false otherwise.
+ */
 bool
 __rbtree_is_no_red_red (struct __rbt_node *root)
 {
@@ -106,6 +135,14 @@ __rbtree_is_no_red_red (struct __rbt_node *root)
          && __rbtree_is_no_red_red (root->right);
 }
 
+/**
+ * @brief Function to calculate
+ * the black height for <nd> node.
+ *
+ * @param nd Node of Red-black Tree.
+ * @return int Black height for <nd>
+ * node.
+ */
 int
 __rbtree_black_height (struct __rbt_node *nd)
 {
@@ -120,6 +157,16 @@ __rbtree_black_height (struct __rbt_node *nd)
   return left_height;
 }
 
+/**
+ * @brief Function to check that
+ * the root is black height the
+ * same for every tree level.
+ *
+ * @param root Root of Red-black Tree.
+ * @return bool true if black height
+ * the same for every tree level,
+ * false otherwise.
+ */
 bool
 __rbtree_is_black_height_same (struct __rbt_node *root)
 {
@@ -136,6 +183,14 @@ __rbtree_is_black_height_same (struct __rbt_node *root)
   return false;
 }
 
+/**
+ * @brief Function to check all
+ * properties of Red-black Tree.
+ *
+ * @param tree Instanse of Red-black Tree.
+ * @return bool true if Red-black Tree is
+ * correct, false otherwise.
+ */
 bool
 __rbtree_is_correct (rbtree *tree)
 {
@@ -322,6 +377,15 @@ __rbtree_get_max (struct __rbt_node *root)
   return tmp;
 }
 
+/**
+ * @brief Function to perform rebalance
+ * after insert operation.
+ *
+ * @param tree Instanse of Red-black Tree.
+ * @param Inserted node.
+ * @return rbtree_iterator Iterator to the
+ * inserted_node, Null iterator if fails.
+ */
 static rbtree_iterator
 __rbtree_balance_on_insert (rbtree *tree, rbtree_iterator nd)
 {
@@ -397,12 +461,26 @@ __rbtree_balance_on_insert (rbtree *tree, rbtree_iterator nd)
   return res;
 }
 
+/**
+ * @brief Function to perform insert operation.
+ *
+ * @param tree Instanse of Red-black Tree.
+ * @param data Data to insert.
+ * @return rbtree_iterator Iterator to the
+ * inserted_node, Null iterator if fails.
+ */
 static rbtree_iterator
 __rbtree_insert_without_balance (rbtree *tree, constdptr data)
 {
   struct __rbt_node *cur = tree->root, *prev = NULL;
+
+  // flag for case when tree->allow_same is false.
   bool dont_insert = false;
 
+  // While loop to find appropriate place to insert.
+  // If data < cur->data => going to left subtree,
+  // If data >[=] cur->data going to right subtree.
+  // If data == cur->data and allow_same false => break.
   while (cur)
     {
       prev = cur;
@@ -424,9 +502,12 @@ __rbtree_insert_without_balance (rbtree *tree, constdptr data)
 
   if (!dont_insert)
     {
+      // Always making new node with red color.
       struct __rbt_node *new_node
           = __rbt_node_create (data, NULL, NULL, prev, true);
 
+      // Setting reference for the parent of inserted node.
+      // If no parent => new node is root.
       if (prev)
         {
           if (tree->cmp (new_node->data, prev->data) < 0)
@@ -628,7 +709,7 @@ __rbtree_erase_handler (rbtree *tree, rbtree_iterator iter)
 }
 
 ////////////////////////////////////////////////////
-/*   Public API functions of the Red-black Tree    */
+/*   Public API functions of the Red-black Tree   */
 ////////////////////////////////////////////////////
 
 rbtree *
@@ -680,7 +761,18 @@ rbtree_contains (const rbtree *tree, constdptr data)
   return rbtree_find (tree, data) != NULL;
 }
 
-size_t rbtree_count (const rbtree *tree, constdptr data);
+size_t
+rbtree_count (const rbtree *tree, constdptr data)
+{
+  size_t count = 0;
+
+  for (rbtree_iterator iter = rbtree_find (tree, data);
+       iter != rbtree_end () && tree->cmp (iter->data, data) == 0;
+       iter = rbtree_next (iter))
+    count++;
+
+  return count;
+}
 
 inline void
 rbtree_destroy (rbtree *tree)

@@ -1,5 +1,6 @@
-/*j*
- * @file hashmap.h Implementation of Red-black Tree
+/**
+ * @file rbtree.h
+ * @brief Implementation of Red-black Tree
  */
 
 #ifndef _EXTENDED_C_LIB_LIB_RBTREE_H
