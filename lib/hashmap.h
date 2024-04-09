@@ -81,7 +81,7 @@ hashmap *hashmap_create (bool (*pair_keys_cmp) (constdptr pair1,
  *
  * @param hm Pointer to the instance of hashmap.
  * @param key Key for searching.
- * @return dptr
+ * @return dptr Value that associated this key.
  */
 dptr hashmap_at (const hashmap *hm, constdptr key);
 

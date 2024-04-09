@@ -114,6 +114,7 @@ bool __rbtree_is_correct (rbtree *tree);
  * the same values (when cmp() func returns 0).
  * true - allows the same values,
  * false - disallows.
+ * @return rbtree * New instanse of Red-black Tree.
  */
 rbtree *rbtree_create (int (*cmp) (constdptr first, constdptr second),
                        void (*destr) (dptr data), bool allow_same);
@@ -236,6 +237,7 @@ bool rbtree_empty (rbtree *tree);
  * or returns Null iterator if element hasn't found.
  *
  * @param tree Pointer to Red-black Tree.
+ * @param data Data to find.
  * @return rbtree_iterator Iterator to found element.
  */
 rbtree_iterator rbtree_find (const rbtree *tree, constdptr data);

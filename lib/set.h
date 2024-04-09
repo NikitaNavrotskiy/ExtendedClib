@@ -43,6 +43,7 @@ typedef const_rbtree_iterator const_set_iterator;
  * 3. Return int > 0 if first > second.
  * @param destr Destructor function for nodes.
  * Null if should not be freed.
+ * @return set * New instanse of set.
  */
 set *set_create (int (*cmp) (constdptr first, constdptr second),
                  void (*destr) (dptr data));
@@ -164,6 +165,7 @@ bool set_empty (set *st);
  * or returns Null iterator if element hasn't found.
  *
  * @param st Pointer to Set.
+ * @param data Data to find.
  * @return set_iterator Iterator to found element.
  */
 set_iterator set_find (const set *st, constdptr data);
